@@ -39,9 +39,8 @@ GraphAdjacencyMatrix *createGraphAdjacencyMatrix(int vertices){
     }
 
     for (i = 0; i < graph->vertices; i++){
-        for (j = 0; j < graph->vertices; j++){
+        for (j = 0; j < graph->vertices; j++)
             graph->matriz[i][j] = 0;
-        }
     }
 
     return graph;
