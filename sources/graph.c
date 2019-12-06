@@ -83,4 +83,9 @@ int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     return graph->vertices;
 }
 
+int *breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertex){
+    
+    return NULL;
+}
+
 #endif
