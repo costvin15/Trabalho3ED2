@@ -1,7 +1,7 @@
 #ifndef _UTILS_C_
 #define _UTILS_C_
 
-#include "utils.h"
+#include "../headers/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,7 +38,7 @@ char *readFile(char *filename){
     return str;
 }
 
-GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
+GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(int directioned){
     int i, j;
     int numlines;
     char *lines;
@@ -101,7 +101,7 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
         return NULL;
 
     for (i = 0; i < numlines; i++){
-        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], (graphweights[i] < 0.0001) ? 0 : 1)){
+        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], directioned)){
             for (j = 0; j < numlines; j++)
                 free(graphedges[i]);
             free(content);
