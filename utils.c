@@ -58,11 +58,17 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
     lines = __strtok_r(NULL, "\n", &linessaveptr);
 
     graphedges = (int **) malloc(numlines * sizeof(int *));
-    if (!graphedges)
+    if (!graphedges){
+        free(content);
         return NULL;
+    }
+
     graphweights = (double *) malloc(numlines * sizeof(double));
-    if (!graphweights)
+    if (!graphweights){
+        free(content);
+        free(graphedges);
         return NULL;
+    }
 
     i = 0;
     while (lines){
@@ -71,6 +77,7 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
         if (!graphedges[i]){
             for (; j < i; j++)
                 free(graphedges[i]);
+            free(content);
             free(graphedges);
             free(graphweights);
             return NULL;
@@ -93,15 +100,21 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
     if (!graph)
         return NULL;
 
-    for (i = 0; i < numlines; i++)
+    for (i = 0; i < numlines; i++){
         if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], (graphweights[i] < 0.0001) ? 0 : 1)){
             for (j = 0; j < numlines; j++)
                 free(graphedges[i]);
+            free(content);
             free(graphedges);
             free(graphweights);
             return NULL;
         }
-
+        free(graphedges[i]);
+    }
+    
+    free(content);
+    free(graphedges);
+    free(graphweights);
     return graph;
 }
 
