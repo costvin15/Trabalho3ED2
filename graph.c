@@ -40,7 +40,7 @@ GraphAdjacencyMatrix *createGraphAdjacencyMatrix(int vertices){
 
     for (i = 0; i < graph->vertices; i++){
         for (j = 0; j < graph->vertices; j++)
-            graph->matriz[i][j] = 0;
+            graph->matriz[i][j] = __INT_MAX__;
     }
 
     return graph;
@@ -73,6 +73,14 @@ int insertGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int ver
         graph->matriz[vertexB][vertexA] = weight;
 
     return true;
+}
+
+int getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB){
+    return graph->matriz[vertexA][vertexB];
+}
+
+int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    return graph->vertices;
 }
 
 #endif
