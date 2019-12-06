@@ -1,6 +1,7 @@
 #ifndef _GRAPH_C_
 #define _GRAPH_C_
 
+#include "../headers/queue.h"
 #include "../headers/graph.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -83,8 +84,20 @@ int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     return graph->vertices;
 }
 
-int *breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertex){
-    
+int *breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
+    Queue *queue;
+
+    queue = createQueue();
+    pushQueue(queue, (void *) &(root));
+
+    while (!emptyQueue(queue)){
+        void *front = popQueue(queue);
+        int current = *((int *) front);
+        
+        if (current == value)
+            return current;
+    }
+
     return NULL;
 }
 

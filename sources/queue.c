@@ -97,4 +97,23 @@ void *popQueue(Queue *queue){
     return data;
 }
 
+void *frontQueue(Queue *queue){
+    QueueNode *current;
+    
+    if (!queue)
+        return NULL;
+
+    while (current->next)
+        current = current->next;
+    
+    return current->value;
+}
+
+int emptyQueue(Queue *queue){
+    if (!queue)
+        return NULL;
+    
+    return !queue->root;
+}
+
 #endif
