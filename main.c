@@ -9,7 +9,7 @@ int main(void){
     graph = readFileAndPopulateGraphAdjacencyMatrix();
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
         for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
-            printf("%d ", getVertexGraphAdjacencyMatrix(graph, i, j));
+            printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
         printf("\n");
     }
 

@@ -7,7 +7,7 @@
 
 struct _adjacency_matrix_ {
     int vertices;
-    int **matriz;
+    double **matriz;
 };
 
 GraphAdjacencyMatrix *createGraphAdjacencyMatrix(int vertices){
@@ -21,14 +21,14 @@ GraphAdjacencyMatrix *createGraphAdjacencyMatrix(int vertices){
     if (!graph)
         return NULL;
     graph->vertices = vertices;
-    graph->matriz = (int **) malloc(graph->vertices * sizeof(int *));
+    graph->matriz = (double **) malloc(graph->vertices * sizeof(double *));
     if (!graph->matriz){
         free(graph);
         return NULL;
     }
     
     for (i = 0; i < graph->vertices; i++){
-        graph->matriz[i] = (int *) malloc(graph->vertices * sizeof(int));
+        graph->matriz[i] = (double *) malloc(graph->vertices * sizeof(double));
         if (!graph->matriz[i]){
             for (j = 0; j < i; j++)
                 free(graph->matriz[j]);
@@ -60,7 +60,7 @@ int destroyGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     return true;
 }
 
-int insertGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB, int weight, int directioned){
+int insertGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB, double weight, int directioned){
     if (!graph)
         return false;
     if (vertexA < 0)
@@ -75,7 +75,7 @@ int insertGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int ver
     return true;
 }
 
-int getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB){
+double getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB){
     return graph->matriz[vertexA][vertexB];
 }
 
