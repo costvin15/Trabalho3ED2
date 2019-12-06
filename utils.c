@@ -71,6 +71,8 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
         if (!graphedges[i]){
             for (; j < i; j++)
                 free(graphedges[i]);
+            free(graphedges);
+            free(graphweights);
             return NULL;
         }
 
@@ -92,8 +94,13 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
         return NULL;
 
     for (i = 0; i < numlines; i++)
-        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], (graphweights[i] < 0.0001) ? 0 : 1))
+        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], (graphweights[i] < 0.0001) ? 0 : 1)){
+            for (j = 0; j < numlines; j++)
+                free(graphedges[i]);
+            free(graphedges);
+            free(graphweights);
             return NULL;
+        }
 
     return graph;
 }
