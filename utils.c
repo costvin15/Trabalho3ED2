@@ -45,7 +45,8 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
     char *linessaveptr;
     char *content;
     char *numbers;
-    int **graphcontent;
+    int **graphedges;
+    double *graphweights;
     GraphAdjacencyMatrix *graph;
     
     content = readFile("inputs/test");
@@ -56,25 +57,31 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
     numlines = atoi(lines);
     lines = __strtok_r(NULL, "\n", &linessaveptr);
 
-    graphcontent = (int **) malloc(numlines * sizeof(int *));
-    if (!graphcontent)
+    graphedges = (int **) malloc(numlines * sizeof(int *));
+    if (!graphedges)
+        return NULL;
+    graphweights = (double *) malloc(numlines * sizeof(double));
+    if (!graphweights)
         return NULL;
 
     i = 0;
     while (lines){
         j = 0;
-        graphcontent[i] = (int *) malloc(3 * sizeof(int));
-        graphcontent[i][2] = 0;
-        if (!graphcontent[i]){
+        graphedges[i] = (int *) malloc(2 * sizeof(int));
+        if (!graphedges[i]){
             for (; j < i; j++)
-                free(graphcontent[i]);
+                free(graphedges[i]);
             return NULL;
         }
 
         numbers = strtok(lines, " ");
         while (numbers){
-            graphcontent[i][j++] = atoi(numbers);
-            numbers = strtok(NULL, "\n");
+            if (j != 2)
+                graphedges[i][j++] = atoi(numbers);
+            else {
+                graphweights[i] = atof(numbers);
+            }
+            numbers = strtok(NULL, " ");
         }
         lines = __strtok_r(NULL, "\n", &linessaveptr);
         i++;
@@ -85,7 +92,7 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(){
         return NULL;
 
     for (i = 0; i < numlines; i++)
-        if(!insertGraphAdjacencyMatrix(graph, graphcontent[i][0] - 1, graphcontent[i][1] - 1, graphcontent[i][2], graphcontent[i][2] == 0 ? 0 : 1))
+        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], (graphweights[i] < 0.0001) ? 0 : 1))
             return NULL;
 
     return graph;
