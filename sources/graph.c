@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+/**
+ * @file graph.c
+ * @author Vinicius Costa Castro
+ * @date 6 Dec 2019
+ * @brief File containing the implementation of ADT Graph
+ **/
+
 #ifndef _GRAPH_C_
 #define _GRAPH_C_
 
@@ -23,6 +30,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+/**
+ * @brief Representation of an adjacency matrix graph
+ **/
 struct _adjacency_matrix_ {
     int vertices;
     double **matriz;
