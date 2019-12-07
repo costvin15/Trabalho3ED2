@@ -133,7 +133,7 @@ int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int verte
 
 int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
     Queue *queue;
-    int i, *currentNode, *currentNeighbour, *vertexVisited, *neighbours, *distances;
+    int i, distance, *currentNode, *currentNeighbour, *vertexVisited, *neighbours, *distances;
 
     if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
@@ -195,11 +195,14 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
         free(currentNode);
     }
 
+    distance = distances[value];
+
     destroyQueue(queue);
     free(neighbours);
     free(vertexVisited);
+    free(distances);
 
-    return distances[value];
+    return distance;
 }
 
 void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
