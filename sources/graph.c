@@ -117,7 +117,7 @@ int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int verte
 
 int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
     Queue *queue;
-    int i, *currentNode, *vertexVisited, *neighbours;
+    int i, *currentNode, *currentNeighbour, *vertexVisited, *neighbours, *distances;
 
     if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
@@ -141,8 +141,18 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
         return 0;
     }
 
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+    distances = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!distances){
+        free(vertexVisited);
+        free(currentNode);
+        destroyQueue(queue);
+        return 0;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
         vertexVisited[i] = false;
+        distances[i] = 0;
+    }
 
     *currentNode = root;
     pushQueue(queue, (void *) currentNode);
@@ -152,25 +162,28 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
         currentNode = (int *) popQueue(queue);
 
         neighbours = getNeighbourhoodGraphAdjacencyMatrix(graph, *currentNode);
-        free(currentNode);
 
         for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
             if (neighbours[i] == -1)
                 break;
             if (vertexVisited[neighbours[i]])
                 continue;
-            currentNode = (int *) malloc(sizeof(int));
-            *currentNode = neighbours[i];
-            pushQueue(queue, (void *) currentNode);
+            
+            distances[neighbours[i]] = distances[*currentNode] + 1;
+            currentNeighbour = (int *) malloc(sizeof(int));
+            *currentNeighbour = neighbours[i];
+            pushQueue(queue, (void *) currentNeighbour);
             vertexVisited[neighbours[i]] = true;
         }
+
+        free(currentNode);
     }
 
     destroyQueue(queue);
     free(neighbours);
     free(vertexVisited);
 
-    return 0;
+    return distances[value];
 }
 
 #endif
