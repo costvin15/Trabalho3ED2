@@ -34,6 +34,7 @@ QueueNode *createQueueNode(void *data){
     node = (QueueNode *) malloc(sizeof(QueueNode));
     if (!node)
         return NULL;
+
     node->value = data;
     node->next = NULL;
     return node;
@@ -59,22 +60,25 @@ int destroyQueue(Queue *queue){
 }
 
 int pushQueue(Queue *queue, void *data){
-    QueueNode *aux;
+    QueueNode *aux, *previous;
     
     if (!queue)
         return false;
     if (!data)
         return false;
-    
-    if (!queue->root){
-        queue->root = createQueueNode(data);
-        return true;
-    }
 
     aux = queue->root;
-    while (aux->next)
+    previous = NULL;
+
+    while (aux){
+        previous = aux;
         aux = aux->next;
-    aux->next = createQueueNode(data);
+    }
+
+    if (previous)
+        previous->next = createQueueNode(data);
+    else
+        queue->root = createQueueNode(data);
     return true;
 }
 
@@ -84,16 +88,26 @@ void *popQueue(Queue *queue){
 
     if (!queue)
         return NULL;
+    if (emptyQueue(queue))
+        return NULL;
     
     current = queue->root;
+    previous = NULL;
+
     while (current->next){
         previous = current;
         current = current->next;
     }
 
-    previous->next = NULL;
+    if (previous){
+        previous->next = NULL;
+    } else {
+        queue->root = NULL;
+    }
+    
     data = current->value;
     free(current);
+
     return data;
 }
 
@@ -111,7 +125,7 @@ void *frontQueue(Queue *queue){
 
 int emptyQueue(Queue *queue){
     if (!queue)
-        return NULL;
+        return false;
     
     return !queue->root;
 }

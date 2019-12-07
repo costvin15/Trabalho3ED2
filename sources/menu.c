@@ -15,6 +15,7 @@ void menu(){
             printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
         printf("\n");
     }
+    printf("BFS: %d\n", breadthFirstSearchAdjacencyMatrix(graph, 0, 4));
 }
 
 #endif

@@ -5,6 +5,7 @@
 #include "../headers/graph.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 struct _adjacency_matrix_ {
     int vertices;
@@ -77,28 +78,97 @@ int insertGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int ver
 }
 
 double getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertexA, int vertexB){
+    if (!graph)
+        return (double) __INT_MAX__;
+    if (vertexA < 0)
+        return (double) __INT_MAX__;
+    if (vertexB < 0)
+        return (double) __INT_MAX__;
+
     return graph->matriz[vertexA][vertexB];
 }
 
 int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    if (!graph)
+        return 0;
     return graph->vertices;
 }
 
-int *breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
+int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertex){
+    int i, j, *neighbourhoods;
+
+    if (!graph)
+        return NULL;
+    if (vertex < 0)
+        return NULL;
+    
+    neighbourhoods = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!neighbourhoods)
+        return NULL;
+
+    for (i = 0, j = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+        if (!(getVertexGraphAdjacencyMatrix(graph, vertex, i) - __INT_MAX__ < 0.001f))
+            neighbourhoods[j++] = i;
+    
+    neighbourhoods[j] = -1;
+
+    return neighbourhoods;
+}
+
+int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
     Queue *queue;
+    int i, count, *currentPtr, *currentNode, *vertexVisited, *neighbours;
+
+    if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
+        return 0;
+    if (value < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
+        return 0;
 
     queue = createQueue();
-    pushQueue(queue, (void *) &(root));
-
-    while (!emptyQueue(queue)){
-        void *front = popQueue(queue);
-        int current = *((int *) front);
-        
-        if (current == value)
-            return current;
+    if (!queue)
+        return 0;
+    
+    currentPtr = (int *) malloc(sizeof(int));
+    if (!currentPtr){
+        destroyQueue(queue);
+        return 0;
+    }
+    
+    vertexVisited = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!vertexVisited){
+        free(currentPtr);
+        destroyQueue(queue);
+        return 0;
     }
 
-    return NULL;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+        vertexVisited[i] = false;
+
+    *currentPtr = root;
+    pushQueue(queue, (void *) currentPtr);
+    vertexVisited[root] = true;
+    
+    count = 0;
+    while (!emptyQueue(queue)){
+        count++;
+        currentNode = (int *) popQueue(queue);
+
+        neighbours = getNeighbourhoodGraphAdjacencyMatrix(graph, *currentNode);
+        free(currentNode);
+
+        for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+            if (neighbours[i] == -1)
+                break;
+            if (vertexVisited[neighbours[i]])
+                continue;
+            currentNode = (int *) malloc(sizeof(int));
+            *currentNode = neighbours[i];
+            pushQueue(queue, (void *) currentNode);
+            vertexVisited[neighbours[i]] = true;
+        }
+    }
+
+    return count;
 }
 
 #endif
