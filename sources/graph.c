@@ -107,7 +107,7 @@ int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int verte
         return NULL;
 
     for (i = 0, j = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
-        if (!(getVertexGraphAdjacencyMatrix(graph, vertex, i) - __INT_MAX__ < 0.001f))
+        if (!((double) __INT_MAX__ - getVertexGraphAdjacencyMatrix(graph, vertex, i) < 0.001))
             neighbourhoods[j++] = i;
     
     neighbourhoods[j] = -1;
@@ -117,7 +117,7 @@ int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int verte
 
 int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
     Queue *queue;
-    int i, count, *currentPtr, *currentNode, *vertexVisited, *neighbours;
+    int i, *currentNode, *vertexVisited, *neighbours;
 
     if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
@@ -128,15 +128,15 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
     if (!queue)
         return 0;
     
-    currentPtr = (int *) malloc(sizeof(int));
-    if (!currentPtr){
+    currentNode = (int *) malloc(sizeof(int));
+    if (!currentNode){
         destroyQueue(queue);
         return 0;
     }
     
     vertexVisited = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
     if (!vertexVisited){
-        free(currentPtr);
+        free(currentNode);
         destroyQueue(queue);
         return 0;
     }
@@ -144,13 +144,11 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
         vertexVisited[i] = false;
 
-    *currentPtr = root;
-    pushQueue(queue, (void *) currentPtr);
+    *currentNode = root;
+    pushQueue(queue, (void *) currentNode);
     vertexVisited[root] = true;
     
-    count = 0;
     while (!emptyQueue(queue)){
-        count++;
         currentNode = (int *) popQueue(queue);
 
         neighbours = getNeighbourhoodGraphAdjacencyMatrix(graph, *currentNode);
@@ -168,7 +166,11 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
         }
     }
 
-    return count;
+    destroyQueue(queue);
+    free(neighbours);
+    free(vertexVisited);
+
+    return 0;
 }
 
 #endif

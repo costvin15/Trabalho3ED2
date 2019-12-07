@@ -48,7 +48,7 @@ int destroyQueue(Queue *queue){
     
     previous = NULL;
     node = queue->root;
-    while (node->next){
+    while (node && node->next){
         previous = node;
         node = node->next;
         free(previous);
