@@ -202,4 +202,22 @@ int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int
     return distances[value];
 }
 
+void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i, j;
+    double vertex;
+
+    if (!graph)
+        return;
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        printf("%d: ", i + 1);
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++){
+            vertex = getVertexGraphAdjacencyMatrix(graph, i, j);
+            if ((double) __INT_MAX__ - vertex > 0.001)
+                printf("%d ", j + 1);
+        }
+        putchar('\n');
+    }
+}
+
 #endif

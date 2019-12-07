@@ -26,6 +26,9 @@ void menu(){
     GraphAdjacencyMatrix *graph;
     
     graph = readFileAndPopulateGraphAdjacencyMatrix(0);
+    
+    printGraphAdjacencyMatrix(graph);
+
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
         for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
             printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
