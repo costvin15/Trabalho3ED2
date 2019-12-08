@@ -18,7 +18,7 @@
 #define _MENU_C_
 
 #include <stdio.h>
-#include "../headers/graph.h"
+#include "../headers/graphadjacencymatrix.h"
 #include "../headers/utils.h"
 
 void menu(){
@@ -36,7 +36,7 @@ void menu(){
     }
     int a, b;
     scanf("%d%d", &a, &b);
-    printf("BFS: %d\n", breadthFirstSearchAdjacencyMatrix(graph, a, b));
+    printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));
 }
 
 #endif

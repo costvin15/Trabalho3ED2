@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef _GRAPH_C_
-#define _GRAPH_C_
+#ifndef _GRAPH_ADJACENCY_MATRIX_C_
+#define _GRAPH_ADJACENCY_MATRIX_C_
 
 #include "../headers/queue.h"
-#include "../headers/graph.h"
+#include "../headers/graphadjacencymatrix.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -131,7 +131,7 @@ int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int verte
     return neighbourhoods;
 }
 
-int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
+int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root, int value){
     Queue *queue;
     int i, distance, *currentNode, *currentNeighbour, *vertexVisited, *neighbours, *distances;
 

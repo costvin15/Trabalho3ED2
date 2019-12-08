@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _GRAPH_H_
-#define _GRAPH_H_
+#ifndef _GRAPH_ADJACENCY_MATRIX_H_
+#define _GRAPH_ADJACENCY_MATRIX_H_
 
 typedef struct _adjacency_matrix_ GraphAdjacencyMatrix;
 
@@ -27,7 +27,8 @@ double getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
-int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
+int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
+int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 
 #else
@@ -40,6 +41,6 @@ extern double getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 extern int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 extern void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
-extern int breadthFirstSearchAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
+extern int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 
 #endif

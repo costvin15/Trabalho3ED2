@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-#include "graphadjacencymatrix.h"
+#ifndef _LINKED_LIST_H_
+#define _LINKED_LIST_H_
 
-#ifndef _UTILS_H_
-#define _UTILS_H_
+typedef struct _linked_list_node_ LinkedListNode;
+typedef struct _linked_list_ LinkedList;
 
-GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+LinkedList *createLinkedList();
+LinkedListNode *createLinkedListNode(void *);
+
+int insertSortedLinkedList(LinkedList *, void *, int (*)(void *, void *));
+void *indexOfLinkedList(LinkedList *, int);
 
 #else
 
-extern GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+extern LinkedList *createLinkedList();
+extern LinkedListNode *createLinkedListNode(void *);
+
+extern int insertSortedLinkedList(LinkedList *, void *, int (*)(void *, void *));
+extern void *indexOfLinkedList(LinkedList *, int);
 
 #endif
