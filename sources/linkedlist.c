@@ -55,6 +55,33 @@ LinkedListNode *createLinkedListNode(void *data){
     return node;
 }
 
+
+int destroyLinkedList(LinkedList *list){
+    LinkedListNode *current;
+
+    if (!list)
+        return false;
+    
+    current = list->head;
+    while (current)
+        current = destroyLinkedListNode(current);
+    
+    return true;
+}
+
+LinkedListNode *destroyLinkedListNode(LinkedListNode *node){
+    LinkedListNode *aux;
+
+    if (!node)
+        return NULL;
+    
+    aux = node->next;
+    free(node->data);
+    free(node);
+
+    return aux;
+}
+
 int insertSortedLinkedList(LinkedList *list, void *data, int (*compare)(void *, void *)){
     LinkedListNode *node, *current, *previous;
 

@@ -22,6 +22,8 @@ typedef struct _linked_list_ LinkedList;
 
 LinkedList *createLinkedList();
 LinkedListNode *createLinkedListNode(void *);
+int destroyLinkedList(LinkedList *);
+LinkedListNode *destroyLinkedListNode(LinkedListNode *);
 
 int insertSortedLinkedList(LinkedList *, void *, int (*)(void *, void *));
 void *indexOfLinkedList(LinkedList *, int);
