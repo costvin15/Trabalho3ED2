@@ -21,11 +21,11 @@
 #define _UTILS_H_
 
 GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
-GraphAdjacencyList *populateGraphAdjacencyList();
+GraphAdjacencyList *populateGraphAdjacencyList(char *, int);
 
 #else
 
 extern GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
-extern GraphAdjacencyList *populateGraphAdjacencyList();
+extern GraphAdjacencyList *populateGraphAdjacencyList(char *, int);
 
 #endif

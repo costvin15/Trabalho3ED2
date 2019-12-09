@@ -23,8 +23,13 @@
 #include "../headers/utils.h"
 
 void menu(){
+    GraphAdjacencyList *graph;
+    
+    graph = populateGraphAdjacencyList("inputs/test", 0);
+    printGraphAdjacencyList(graph);
+    printf("Encerrado.\n");
 
-    int i, j;
+    /*int i, j;
     GraphAdjacencyMatrix *graph;
     graph = populateGraphAdjacencyMatrix("inputs/test", 0);
     printGraphAdjacencyMatrix(graph);
@@ -36,7 +41,7 @@ void menu(){
     }
     int a, b;
     scanf("%d%d", &a, &b);
-    printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));
+    printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));*/
 }
 
 #endif

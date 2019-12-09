@@ -27,6 +27,9 @@ LinkedListNode *destroyLinkedListNode(LinkedListNode *);
 
 int insertSortedLinkedList(LinkedList *, void *, int (*)(void *, void *));
 void *indexOfLinkedList(LinkedList *, int);
+LinkedListNode *getHeadLinkedList(LinkedList *);
+LinkedListNode *getNextLinkedListNode(LinkedListNode *);
+void *getDataLinkedListNode(LinkedListNode *);
 
 #else
 
@@ -35,5 +38,8 @@ extern LinkedListNode *createLinkedListNode(void *);
 
 extern int insertSortedLinkedList(LinkedList *, void *, int (*)(void *, void *));
 extern void *indexOfLinkedList(LinkedList *, int);
+extern LinkedListNode *getHeadLinkedList(LinkedList *);
+extern LinkedListNode *getNextLinkedList(LinkedListNode *);
+extern void *getDataLinkedListNode(LinkedListNode *);
 
 #endif

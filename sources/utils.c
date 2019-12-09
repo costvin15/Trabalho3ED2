@@ -149,8 +149,46 @@ GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int direction
 }
 
 
-GraphAdjacencyList *populateGraphAdjacencyList(int directioned){
-    return NULL;
+GraphAdjacencyList *populateGraphAdjacencyList(char *filename, int directioned){
+    int i, j, **edges, numlines;
+    double *weights;
+    GraphAdjacencyList *graph;
+
+    numlines = fileContentLines(filename);
+    edges = (int **) malloc(numlines * sizeof(int *));
+    if (!edges)
+        return NULL;
+    weights = (double *) malloc(numlines * sizeof(double));
+    if (!weights){
+        free(edges);
+        return NULL;
+    }
+
+    if (!readFile(filename, edges, weights)){
+        free(weights);
+        free(edges);
+        return NULL;
+    }
+
+    graph = createGraphAdjacencyList(numlines);
+    if (!graph)
+        return NULL;
+
+    for (i = 0; i < numlines; i++){
+        if (!insertGraphAdjacencyList(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
+            for (j = 0; j < numlines; j++)
+                free(edges[i]);
+            free(edges);
+            free(weights);
+            return NULL;
+        }
+        free(edges[i]);
+    }
+
+    free(weights);
+    free(edges);
+    
+    return graph;
 }
 
 #endif
