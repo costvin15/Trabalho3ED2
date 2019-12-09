@@ -23,25 +23,20 @@
 #include "../headers/utils.h"
 
 void menu(){
-    GraphAdjacencyList *graph;
-    graph = createGraphAdjacencyList(10);
-    printf("%p\n", graph);
 
-    // int i, j;
-    // GraphAdjacencyMatrix *graph;
-    
-    // graph = readFileAndPopulateGraphAdjacencyMatrix(0);
-    
-    // printGraphAdjacencyMatrix(graph);
+    int i, j;
+    GraphAdjacencyMatrix *graph;
+    graph = populateGraphAdjacencyMatrix("inputs/test", 0);
+    printGraphAdjacencyMatrix(graph);
 
-    // for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
-    //     for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
-    //         printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
-    //     printf("\n");
-    // }
-    // int a, b;
-    // scanf("%d%d", &a, &b);
-    // printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
+            printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
+        printf("\n");
+    }
+    int a, b;
+    scanf("%d%d", &a, &b);
+    printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));
 }
 
 #endif

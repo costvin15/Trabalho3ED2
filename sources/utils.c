@@ -21,90 +21,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-char *readFile(char *filename){
+int fileContentLines(char *filename){
     FILE *file;
-    char *str, current;
-    int filesize, currentPos = 0;
+    int filesize;
+    char c;
+
+    file = fopen(filename, "r");
+    if (!file)
+        return 0;
+    
+    for (c = fgetc(file), filesize = 0; c != EOF; c = fgetc(file))
+        if (c == '\n')
+            filesize++;
+
+    return filesize;
+}
+
+int readFile(char *filename, int **edges, double *weights){
+    FILE *file;
+    char *content, *numbers, current, *lines, *linessaveptr;
+    int i, j, filesize, currentPos = 0;
     
     file = fopen(filename, "r");
     if (!file)
-        return NULL;
+        return false;
     
-    fseek(file, 0, SEEK_END);
-    filesize = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    filesize = fileContentLines(filename);
 
     if (filesize < 1)
-        return NULL;
+        return false;
     
-    str = (char *) malloc(filesize * sizeof(char));
-    if (!str)
-        return NULL;
+    content = (char *) malloc(filesize * sizeof(char));
+    if (!content)
+        return false;
     
     while (1){
         current = getc(file);
         if (current == EOF){
-            str[currentPos] = '\0';
+            content[currentPos] = '\0';
             break;
         }
-        str[currentPos++] = current;
+        content[currentPos++] = current;
     }
-
-    return str;
-}
-
-GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(int directioned){
-    int i, j;
-    int numlines;
-    char *lines;
-    char *linessaveptr;
-    char *content;
-    char *numbers;
-    int **graphedges;
-    double *graphweights;
-    GraphAdjacencyMatrix *graph;
-    
-    content = readFile("inputs/test");
-    if (!content)
-        return NULL;
 
     lines = __strtok_r(content, "\n", &linessaveptr);
-    numlines = atoi(lines);
     lines = __strtok_r(NULL, "\n", &linessaveptr);
 
-    graphedges = (int **) malloc(numlines * sizeof(int *));
-    if (!graphedges){
+    if (!edges){
         free(content);
-        return NULL;
+        return false;
     }
 
-    graphweights = (double *) malloc(numlines * sizeof(double));
-    if (!graphweights){
+    if (!weights){
         free(content);
-        free(graphedges);
-        return NULL;
+        return false;
     }
 
     i = 0;
     while (lines){
         j = 0;
-        graphedges[i] = (int *) malloc(2 * sizeof(int));
-        if (!graphedges[i]){
+        edges[i] = (int *) malloc(2 * sizeof(int));
+        if (!edges[i]){
             for (; j < i; j++)
-                free(graphedges[i]);
+                free(edges[i]);
             free(content);
-            free(graphedges);
-            free(graphweights);
-            return NULL;
+            return false;
         }
 
         numbers = strtok(lines, " ");
         while (numbers){
             if (j != 2)
-                graphedges[i][j++] = atoi(numbers);
+                edges[i][j++] = atoi(numbers);
             else {
-                graphweights[i] = atof(numbers);
+                weights[i] = atof(numbers);
             }
             numbers = strtok(NULL, " ");
         }
@@ -112,26 +103,54 @@ GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix(int directioned){
         i++;
     }
 
+    return true;
+}
+
+GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int directioned){
+    int i, j, **edges, numlines;
+    double *weights;
+    GraphAdjacencyMatrix *graph;
+
+    numlines = fileContentLines(filename);
+    edges = (int **) malloc(numlines * sizeof(int *));
+    if (!edges)
+        return NULL;
+    weights = (double *) malloc(numlines * sizeof(double));
+    if (!weights){
+        free(edges);
+        return NULL;
+    }
+
+    if (!readFile(filename, edges, weights)){
+        free(weights);
+        free(edges);
+        return NULL;
+    }
+
     graph = createGraphAdjacencyMatrix(numlines);
     if (!graph)
         return NULL;
 
     for (i = 0; i < numlines; i++){
-        if(!insertGraphAdjacencyMatrix(graph, graphedges[i][0] - 1, graphedges[i][1] - 1, graphweights[i], directioned)){
+        if(!insertGraphAdjacencyMatrix(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
             for (j = 0; j < numlines; j++)
-                free(graphedges[i]);
-            free(content);
-            free(graphedges);
-            free(graphweights);
+                free(edges[i]);
+            free(edges);
+            free(weights);
             return NULL;
         }
-        free(graphedges[i]);
+        free(edges[i]);
     }
     
-    free(content);
-    free(graphedges);
-    free(graphweights);
+    free(weights);
+    free(edges);
+
     return graph;
+}
+
+
+GraphAdjacencyList *populateGraphAdjacencyList(int directioned){
+    return NULL;
 }
 
 #endif

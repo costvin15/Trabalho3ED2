@@ -15,14 +15,17 @@
  */
 
 #include "graphadjacencymatrix.h"
+#include "graphadjacencylist.h"
 
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
+GraphAdjacencyList *populateGraphAdjacencyList();
 
 #else
 
-extern GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+extern GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
+extern GraphAdjacencyList *populateGraphAdjacencyList();
 
 #endif
