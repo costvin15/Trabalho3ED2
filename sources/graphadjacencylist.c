@@ -18,8 +18,14 @@
 #define _GRAPH_ADJACENCY_LIST_C_
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "../headers/graphadjacencylist.h"
 #include "../headers/linkedlist.h"
+
+struct _adjacency_list_node_ {
+    int vertex;
+    double weight;
+};
 
 struct _adjacency_list_ {
     int vertex;
@@ -51,6 +57,53 @@ GraphAdjacencyList *createGraphAdjacencyList(int vertex){
     }
 
     return graph;
+}
+
+GraphAdjacencyListNode *createGraphAdjacencyListNode(int vertex, double weight){
+    GraphAdjacencyListNode *node;
+
+    node = (GraphAdjacencyListNode *) malloc(sizeof(GraphAdjacencyListNode));
+    if (!node)
+        return NULL;
+    
+    node->vertex = vertex;
+    node->weight = weight;
+    return node;
+}
+
+int compareGraphAdjacencyListNode(GraphAdjacencyListNode *nodeA, GraphAdjacencyListNode *nodeB){
+    if (!nodeA)
+        return false;
+    if (!nodeB)
+        return false;
+    
+    if (nodeA->weight == nodeB->weight)
+        return 0;
+    if (nodeA->weight > nodeB->weight)
+        return 1;
+    return -1;
+}
+
+int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB, double weight){
+    GraphAdjacencyListNode *node;
+
+    if (!graph)
+        return false;
+    if (vertexA < 0)
+        return false;
+    if (vertexB < 0)
+        return false;
+
+    node = createGraphAdjacencyListNode(vertexB, weight);
+    if (!node)
+        return false;
+    
+    if (!insertSortedLinkedList(graph->list[vertexA], (void *) node, compareGraphAdjacencyListNode)){
+        free(node);
+        return false;
+    }
+
+    return true;
 }
 
 #endif

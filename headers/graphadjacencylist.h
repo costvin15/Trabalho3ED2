@@ -17,8 +17,13 @@
 #ifndef _GRAPH_ADJACENCY_LIST_H_
 #define _GRAPH_ADJACENCY_LIST_H_
 
+typedef struct _adjacency_list_node_ GraphAdjacencyListNode;
 typedef struct _adjacency_list_ GraphAdjacencyList;
 
 GraphAdjacencyList *createGraphAdjacencyList(int);
+GraphAdjacencyListNode *createGraphAdjacencyListNode(int, double);
+
+int compareGraphAdjacencyListNode(GraphAdjacencyListNode *, GraphAdjacencyListNode *);
+int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double);
 
 #endif
