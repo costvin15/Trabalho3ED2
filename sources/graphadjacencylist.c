@@ -17,6 +17,7 @@
 #ifndef _GRAPH_ADJACENCY_LIST_C_
 #define _GRAPH_ADJACENCY_LIST_C_
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../headers/graphadjacencylist.h"
@@ -71,20 +72,54 @@ GraphAdjacencyListNode *createGraphAdjacencyListNode(int vertex, double weight){
     return node;
 }
 
-int compareGraphAdjacencyListNode(GraphAdjacencyListNode *nodeA, GraphAdjacencyListNode *nodeB){
+int getVertexCountGraphAdjacencyList(GraphAdjacencyList *graph){
+    if (!graph)
+        return 0;
+    return graph->vertex;
+}
+
+void printGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i;
+    LinkedList *list;
+    LinkedListNode *listNode;
+    GraphAdjacencyListNode *graphNode;
+
+    if (!graph)
+        return;
+    
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        printf("%d: ", i + 1);
+        list = graph->list[i];
+        listNode = getHeadLinkedList(list);
+        while (listNode){
+            graphNode = (GraphAdjacencyListNode *) getDataLinkedListNode(listNode);
+            if (graphNode)
+                printf("- Vertex: %d, Weight: %lf ", graphNode->vertex + 1, graphNode->weight);
+            listNode = getNextLinkedListNode(listNode);
+        }
+        putchar('\n');
+    }
+}
+
+int compareGraphAdjacencyListNode(void *nodeA, void *nodeB){
+    GraphAdjacencyListNode *vertexA, *vertexB;
+    
     if (!nodeA)
         return false;
     if (!nodeB)
         return false;
     
-    if (nodeA->weight == nodeB->weight)
+    vertexA = (GraphAdjacencyListNode *) nodeA;
+    vertexB = (GraphAdjacencyListNode *) nodeB;
+
+    if (vertexA->vertex == vertexB->vertex)
         return 0;
-    if (nodeA->weight > nodeB->weight)
+    if (vertexA->vertex > vertexB->vertex)
         return 1;
     return -1;
 }
 
-int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB, double weight){
+int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB, double weight, int directioned){
     GraphAdjacencyListNode *node;
 
     if (!graph)
@@ -95,12 +130,20 @@ int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB
         return false;
 
     node = createGraphAdjacencyListNode(vertexB, weight);
+    
     if (!node)
         return false;
     
     if (!insertSortedLinkedList(graph->list[vertexA], (void *) node, compareGraphAdjacencyListNode)){
         free(node);
         return false;
+    }
+    if (!directioned){
+        node = createGraphAdjacencyListNode(vertexA, weight);
+        if (!insertSortedLinkedList(graph->list[vertexB], (void *) node, compareGraphAdjacencyListNode)){
+            free(node);
+            return false;
+        }
     }
 
     return true;

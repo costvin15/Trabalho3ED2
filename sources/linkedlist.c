@@ -133,4 +133,22 @@ void *indexOfLinkedList(LinkedList *list, int index){
     return NULL;
 }
 
+LinkedListNode *getHeadLinkedList(LinkedList *list){
+    if (!list)
+        return NULL;
+    return list->head;
+}
+
+LinkedListNode *getNextLinkedListNode(LinkedListNode *node){
+    if (!node)
+        return NULL;
+    return node->next;
+}
+
+void *getDataLinkedListNode(LinkedListNode *node){
+    if (!node)
+        return NULL;
+    return node->data;
+}
+
 #endif

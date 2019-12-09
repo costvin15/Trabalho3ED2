@@ -23,7 +23,20 @@ typedef struct _adjacency_list_ GraphAdjacencyList;
 GraphAdjacencyList *createGraphAdjacencyList(int);
 GraphAdjacencyListNode *createGraphAdjacencyListNode(int, double);
 
-int compareGraphAdjacencyListNode(GraphAdjacencyListNode *, GraphAdjacencyListNode *);
-int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double);
+int getVertexCountGraphAdjacencyList(GraphAdjacencyList *);
+void printGraphAdjacencyList(GraphAdjacencyList *);
+
+int compareGraphAdjacencyListNode(void *, void *);
+int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double, int);
+
+#else
+
+extern GraphAdjacencyList *createGraphAdjacencyList(int);
+extern GraphAdjacencyListNode *createGraphAdjacencyListNode(int, double);
+
+extern void printGraphAdjacencyList(GraphAdjacencyList *);
+
+extern int compareGraphAdjacencyListNode(void *, void *);
+extern int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double, int);
 
 #endif

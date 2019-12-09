@@ -19,10 +19,12 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
+GraphAdjacencyList *populateGraphAdjacencyList(char *, int);
 
 #else
 
-extern GraphAdjacencyMatrix *readFileAndPopulateGraphAdjacencyMatrix();
+extern GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *, int);
+extern GraphAdjacencyList *populateGraphAdjacencyList(char *, int);
 
 #endif

@@ -1,0 +1,28 @@
+
+
+Mon Dec  9 15:51:27 2019
+Command line: TestDisk
+
+TestDisk 7.1, Data Recovery Utility, July 2019
+Christophe GRENIER <grenier@cgsecurity.org>
+https://www.cgsecurity.org
+OS: Linux, kernel 4.19.0-5-amd64 (#1 SMP Debian 4.19.37-5+deb10u1 (2019-07-19)) x86_64
+Compiler: GCC 9.2
+ext2fs lib: 1.44.5, ntfs lib: libntfs-3g, reiserfs lib: none, ewf lib: none, curses lib: ncurses 6.1
+User is not root!
+Hard disk list
+
+
+TestDisk exited normally.
+Using locale 'pt_BR.UTF-8'.
+
+
+Mon Dec  9 15:51:30 2019
+Command line: TestDisk /debug
+
+TestDisk 7.1, Data Recovery Utility, July 2019
+Christophe GRENIER <grenier@cgsecurity.org>
+https://www.cgsecurity.org
+OS: Linux, kernel 4.19.0-5-amd64 (#1 SMP Debian 4.19.37-5+deb10u1 (2019-07-19)) x86_64
+Compiler: GCC 9.2
+ext2fs lib: 1.44.5, ntfs lib: libntfs-3g, reiserfs lib: none, ewf lib: none, curses lib: ncurses 6.1
