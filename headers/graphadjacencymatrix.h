@@ -30,7 +30,7 @@ void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
-int *primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 #else
 
@@ -45,6 +45,6 @@ extern void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 extern int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 extern int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
-extern int *primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+extern int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 #endif
