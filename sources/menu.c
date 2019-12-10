@@ -24,9 +24,15 @@
 
 void menu(){
     GraphAdjacencyList *graph;
-    
+    GraphAdjacencyMatrix *graph2;
+
     graph = populateGraphAdjacencyList("inputs/test", 0);
     printGraphAdjacencyList(graph);
+
+    graph2 = populateGraphAdjacencyMatrix("inputs/test", 0);
+    printGraphAdjacencyMatrix(graph2);
+
+    primAlgorithmGraphAdjacencyMatrix(graph2);
     printf("Encerrado.\n");
 
     /*int i, j;

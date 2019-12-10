@@ -135,6 +135,9 @@ int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root
     Queue *queue;
     int i, distance, *currentNode, *currentNeighbour, *vertexVisited, *neighbours, *distances;
 
+    if (!graph)
+        return 0;
+
     if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
     if (value < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
@@ -221,6 +224,64 @@ void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
         }
         putchar('\n');
     }
+}
+
+int minimunValuePrimGraphAdjacencyMatrix(double *distances, int *mst, int vertexCount){
+    int i, mininum;
+    
+    if (!distances)
+        return -1;
+    if (!mst)
+        return -1;
+
+    mininum = 0;
+    
+    for (i = 0; i < vertexCount; i++)
+        if (!mst[i] && distances[mininum] - distances[i] > 0.01)
+            mininum = i;
+    return mininum;
+}
+
+int *primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i, j, *parent, *mst, minimun;
+    double *distances;
+
+    if (!graph)
+        return NULL;
+
+    parent = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!parent)
+        return NULL;
+
+    mst = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!mst){
+        free(parent);
+        return NULL;
+    }
+
+    distances = (double *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(double));
+    if (!distances){
+        free(mst);
+        free(parent);
+        return NULL;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        distances[i] = (double) __INT_MAX__;
+        mst[i] = false;
+    }
+    distances[0] = (double) 0;
+    parent[0] = -1;
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        minimun = minimunValuePrimGraphAdjacencyMatrix(distances, mst, getVertexCountGraphAdjacencyMatrix(graph));
+        mst[minimun] = true;
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++){
+            
+        }
+    }
+
+    return NULL;
 }
 
 #endif
