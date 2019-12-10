@@ -305,6 +305,7 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
         free(visited);
         return NULL;
     }
+    currentVertex->parent = 0;
     currentVertex->vertex = current;
     currentVertex->weight = 0.0;
     insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
@@ -312,7 +313,8 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     while (getLenghtLinkedList(edges) > 0) {
         currentVertex = removeFront(edges);
         if (!visited[currentVertex->vertex])
-            printf("%d - %d\n", currentVertex->parent, currentVertex->vertex);
+            if (currentVertex->parent != currentVertex->vertex)
+                printf("%d - %d\n", currentVertex->parent, currentVertex->vertex);
         current = currentVertex->vertex;
 
         if (!visited[current]){
