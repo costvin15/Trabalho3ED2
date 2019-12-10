@@ -18,6 +18,7 @@
 #define _GRAPH_ADJACENCY_MATRIX_C_
 
 #include "../headers/queue.h"
+#include "../headers/linkedlist.h"
 #include "../headers/graphadjacencymatrix.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -242,44 +243,98 @@ int minimunValuePrimGraphAdjacencyMatrix(double *distances, int *mst, int vertex
     return mininum;
 }
 
-int *primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
-    int i, j, *parent, *mst, minimun;
-    double *distances;
+int compareDataPrimAuxFunction(void *nodeA, void *nodeB){
+    if (!nodeA)
+        return 0;
+    if (!nodeB)
+        return 0;
+
+    struct vertex {
+        int parent;
+        int vertex;
+        double weight;
+    };
+
+    struct vertex *vertexA, *vertexB;
+    vertexA = (struct vertex *) nodeA;
+    vertexB = (struct vertex *) nodeB;
+    
+    if (vertexA->weight == vertexB->weight){
+        if (vertexA->vertex == vertexB->vertex)
+            return 0;
+        else if (vertexA->vertex > vertexB->vertex)
+            return 1;
+        else
+            return -1;
+    }
+    if (vertexA->weight > vertexB->weight)
+        return 1;
+    return -1;
+}
+
+int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i, *visited, current, *neightbours;
+    LinkedList *edges;
+    struct vertex {
+        int parent;
+        int vertex;
+        double weight;
+    };
+    struct vertex *currentVertex;
+    
 
     if (!graph)
         return NULL;
-
-    parent = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
-    if (!parent)
+    
+    visited = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!visited)
         return NULL;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+        visited[i] = false;
 
-    mst = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
-    if (!mst){
-        free(parent);
-        return NULL;
-    }
-
-    distances = (double *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(double));
-    if (!distances){
-        free(mst);
-        free(parent);
+    edges = createLinkedList();
+    if (!edges){
+        free(visited);
         return NULL;
     }
 
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
-        distances[i] = (double) __INT_MAX__;
-        mst[i] = false;
+    current = 0;
+    currentVertex = (struct vertex *) malloc(sizeof(struct vertex));
+    if (!currentVertex){
+        destroyLinkedList(edges);
+        free(visited);
+        return NULL;
     }
-    distances[0] = (double) 0;
-    parent[0] = -1;
+    currentVertex->vertex = current;
+    currentVertex->weight = 0.0;
+    insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
 
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
-        minimun = minimunValuePrimGraphAdjacencyMatrix(distances, mst, getVertexCountGraphAdjacencyMatrix(graph));
-        mst[minimun] = true;
-        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++){
-            
+    while (getLenghtLinkedList(edges) > 0) {
+        currentVertex = removeFront(edges);
+        if (!visited[currentVertex->vertex])
+            printf("%d - %d\n", currentVertex->parent, currentVertex->vertex);
+        current = currentVertex->vertex;
+
+        if (!visited[current]){
+            visited[current] = true;
+            neightbours = getNeighbourhoodGraphAdjacencyMatrix(graph, current);
+            for (i = 0; neightbours[i] != -1; i++){
+                if (visited[neightbours[i]])
+                    continue;
+                currentVertex = (struct vertex *) malloc(sizeof(struct vertex));
+                if (!currentVertex){
+                    free(neightbours);
+                    destroyLinkedList(edges);
+                    free(visited);
+                    return NULL;
+                }
+                currentVertex->parent = current;
+                currentVertex->vertex = neightbours[i];
+                currentVertex->weight = getVertexGraphAdjacencyMatrix(graph, current, neightbours[i]);
+                insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
+            }
         }
-    }
+    }    
 
     return NULL;
 }

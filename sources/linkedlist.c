@@ -114,7 +114,48 @@ int insertSortedLinkedList(LinkedList *list, void *data, int (*compare)(void *, 
     return true;
 }
 
-void *indexOfLinkedList(LinkedList *list, int index){
+int insertLinkedList(LinkedList *list, void *data){
+    LinkedListNode *node, *current, *previous;
+
+    if (!list)
+        return false;
+    if (!data)
+        return false;
+    
+    node = createLinkedListNode(data);
+
+    previous = NULL;
+    current = list->head;
+
+    while (current){
+        previous = current;
+        current = current->next;
+    }
+
+    if (previous)
+        previous->next = node;
+    else
+        list->head = node;
+    return true;
+}
+
+void *removeFront(LinkedList *list){
+    LinkedListNode *node;
+    void *data;
+
+    if (!list)
+        return NULL;
+
+    node = list->head;
+    if (!node)
+        return NULL;
+    list->head = node->next;
+    data = node->data;
+    free(node);
+    return data;
+}
+
+void *getDataByIndexLinkedList(LinkedList *list, int index){
     LinkedListNode *current;
 
     if (!list)
@@ -130,6 +171,27 @@ void *indexOfLinkedList(LinkedList *list, int index){
     
     if (current)
         return current->data;
+    return NULL;
+}
+
+LinkedListNode *getDataLinkedList(LinkedList *list, void *data, int (*compare)(void *, void *)){
+    LinkedListNode *node;
+
+    if (!list)
+        return NULL;
+    if (!data)
+        return NULL;
+    if (!compare)
+        return NULL;
+    
+    node = list->head;
+    
+    while (node){
+        if (compare(node->data, data) == 0)
+            return node;
+        node = node->next;
+    }
+
     return NULL;
 }
 
@@ -149,6 +211,23 @@ void *getDataLinkedListNode(LinkedListNode *node){
     if (!node)
         return NULL;
     return node->data;
+}
+
+int getLenghtLinkedList(LinkedList *list){
+    int c;
+    LinkedListNode *node;
+
+    if (!list)
+        return 0;
+    
+    c = 0;
+    node = list->head;
+    while (node){
+        node = node->next;
+        c++;
+    }
+
+    return c;
 }
 
 #endif
