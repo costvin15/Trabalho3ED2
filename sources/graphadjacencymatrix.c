@@ -273,7 +273,7 @@ int compareDataPrimAuxFunction(void *nodeA, void *nodeB){
 }
 
 int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
-    int i, *visited, current, *neightbours;
+    int i, j, *visited, current, *neightbours, **mst;
     LinkedList *edges;
     struct vertex {
         int parent;
@@ -298,11 +298,28 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
         return NULL;
     }
 
+    mst = (int **) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int *));
+    if (!mst){
+        destroyLinkedList(edges);
+        free(visited);
+    }
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        mst[i] = (int *) malloc(2 * sizeof(int));
+        if (!mst[i]){
+            for (j = 0; j < i; j++)
+                free(mst[j]);
+            return NULL;
+        }
+    }
+
     current = 0;
     currentVertex = (struct vertex *) malloc(sizeof(struct vertex));
     if (!currentVertex){
         destroyLinkedList(edges);
         free(visited);
+        for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+            free(mst[i]);
+        free(mst);
         return NULL;
     }
     currentVertex->parent = 0;
@@ -310,11 +327,14 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     currentVertex->weight = 0.0;
     insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
 
+    j = 0;
     while (getLenghtLinkedList(edges) > 0) {
         currentVertex = removeFront(edges);
         if (!visited[currentVertex->vertex])
-            if (currentVertex->parent != currentVertex->vertex)
-                printf("%d - %d\n", currentVertex->parent, currentVertex->vertex);
+            if (currentVertex->parent != currentVertex->vertex){
+                mst[j][0] = currentVertex->parent;
+                mst[j++][1] = currentVertex->vertex;
+            }
         current = currentVertex->vertex;
 
         if (!visited[current]){
@@ -328,6 +348,9 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
                     free(neightbours);
                     destroyLinkedList(edges);
                     free(visited);
+                    for (j = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+                        free(mst[i]);
+                    free(mst);
                     return NULL;
                 }
                 currentVertex->parent = current;
@@ -336,9 +359,13 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
                 insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
             }
         }
-    }    
+    }
 
-    return NULL;
+    free(neightbours);
+    destroyLinkedList(edges);
+    free(visited);
+
+    return mst;
 }
 
 #endif
