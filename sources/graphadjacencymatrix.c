@@ -424,4 +424,35 @@ int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     return NULL;
 }
 
+double **floydWarshallGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i, j, k;
+    double **matrix;
+
+    if (!graph)
+        return NULL;
+    
+    matrix = (double **) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(double *));
+    if (!matrix)
+        return NULL;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        matrix[i] = (double *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(double));
+        if (!matrix){
+            for (j = 0; j < i; j++)
+                free(matrix[j]);
+            free(matrix);
+            return NULL;
+        }
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
+            matrix[i][j] = getVertexGraphAdjacencyMatrix(graph, i, j);
+        matrix[i][i] = (double) 0;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
+            for (k = 0; k < getVertexCountGraphAdjacencyMatrix(graph); j++)
+                if (matrix[j][k] - (matrix[j][i] + matrix[i][k]) > 0.001)
+                    matrix[j][k] = matrix[j][i] + matrix[i][k];
+    return matrix;
+}
+
 #endif
