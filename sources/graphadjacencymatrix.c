@@ -243,7 +243,7 @@ int minimunValuePrimGraphAdjacencyMatrix(double *distances, int *mst, int vertex
     return mininum;
 }
 
-int compareDataPrimAuxFunction(void *nodeA, void *nodeB){
+int compareVertexAuxFunction(void *nodeA, void *nodeB){
     if (!nodeA)
         return 0;
     if (!nodeB)
@@ -325,7 +325,7 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     currentVertex->parent = 0;
     currentVertex->vertex = current;
     currentVertex->weight = 0.0;
-    insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
+    insertSortedLinkedList(edges, (void *) currentVertex, compareVertexAuxFunction);
 
     j = 0;
     while (getLenghtLinkedList(edges) > 0) {
@@ -356,7 +356,7 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
                 currentVertex->parent = current;
                 currentVertex->vertex = neightbours[i];
                 currentVertex->weight = getVertexGraphAdjacencyMatrix(graph, current, neightbours[i]);
-                insertSortedLinkedList(edges, (void *) currentVertex, compareDataPrimAuxFunction);
+                insertSortedLinkedList(edges, (void *) currentVertex, compareVertexAuxFunction);
             }
         }
     }
@@ -366,6 +366,62 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     free(visited);
 
     return mst;
+}
+
+int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i, j, *visited;
+    LinkedList *edgesList;
+    LinkedListNode *listNode;
+    struct _graph_edge_ {
+        int parent, vertex;
+        double weight;
+    };
+    struct _graph_edge_ *edge;
+
+    if (!graph)
+        return NULL;
+
+    edgesList = createLinkedList();
+    if (!edgesList)
+        return NULL;
+
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++){ 
+            if ((double) __INT_MAX__ - getVertexGraphAdjacencyMatrix(graph, i, j) > 0.001){
+                edge = (struct _graph_edge_ *) malloc(sizeof(struct _graph_edge_));
+                if (!edge){
+                    destroyLinkedList(edgesList);
+                    return NULL;
+                }
+                edge->parent = i;
+                edge->vertex = j;
+                edge->weight = getVertexGraphAdjacencyMatrix(graph, i, j);
+                insertSortedLinkedList(edgesList, (void *) edge, compareVertexAuxFunction);
+            }
+        }
+    }
+
+    visited = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!visited){
+        destroyLinkedList(edgesList);
+        return NULL;
+    }
+    
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
+        visited[i] = false;
+    
+    listNode = getHeadLinkedList(edgesList);
+    while (listNode){
+        edge = (struct _graph_edge_ *) getDataLinkedListNode(listNode);
+        if (!(visited[edge->parent] && visited[edge->vertex]))
+            printf("%d %d\n", edge->parent + 1, edge->vertex + 1);
+        visited[edge->parent] = true;
+        visited[edge->vertex] = true;
+
+        listNode = getNextLinkedListNode(listNode);
+    }
+
+    return NULL;
 }
 
 #endif

@@ -31,6 +31,7 @@ int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 #else
 
@@ -46,5 +47,6 @@ extern int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, i
 extern int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 extern int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+extern int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
 #endif
