@@ -20,23 +20,34 @@
 typedef struct _adjacency_list_node_ GraphAdjacencyListNode;
 typedef struct _adjacency_list_ GraphAdjacencyList;
 
-GraphAdjacencyList *createGraphAdjacencyList(int);
+GraphAdjacencyList *createGraphAdjacencyList(int, int);
 GraphAdjacencyListNode *createGraphAdjacencyListNode(int, double);
 
 int getVertexCountGraphAdjacencyList(GraphAdjacencyList *);
+int getEdgesCountGraphAdjacencyList(GraphAdjacencyList *);
 void printGraphAdjacencyList(GraphAdjacencyList *);
 
 int compareGraphAdjacencyListNode(void *, void *);
 int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double, int);
 
+double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
+int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *, int);
+int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
+
 #else
 
-extern GraphAdjacencyList *createGraphAdjacencyList(int);
+extern GraphAdjacencyList *createGraphAdjacencyList(int, int);
 extern GraphAdjacencyListNode *createGraphAdjacencyListNode(int, double);
 
+extern int getVertexCountGraphAdjacencyList(GraphAdjacencyList *);
+extern int getEdgesCountGraphAdjacencyList(GraphAdjacencyList *);
 extern void printGraphAdjacencyList(GraphAdjacencyList *);
 
 extern int compareGraphAdjacencyListNode(void *, void *);
 extern int insertGraphAdjacencyList(GraphAdjacencyList *, int, int, double, int);
+
+extern double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
+extern int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *graph, int vertex);
+extern int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
 
 #endif

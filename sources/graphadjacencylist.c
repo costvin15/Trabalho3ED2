@@ -22,6 +22,7 @@
 #include <stdbool.h>
 #include "../headers/graphadjacencylist.h"
 #include "../headers/linkedlist.h"
+#include "../headers/queue.h"
 
 struct _adjacency_list_node_ {
     int vertex;
@@ -30,10 +31,11 @@ struct _adjacency_list_node_ {
 
 struct _adjacency_list_ {
     int vertex;
+    int directioned;
     LinkedList **list;
 };
 
-GraphAdjacencyList *createGraphAdjacencyList(int vertex){
+GraphAdjacencyList *createGraphAdjacencyList(int vertex, int directioned){
     int i, j;
     GraphAdjacencyList *graph;
 
@@ -41,6 +43,7 @@ GraphAdjacencyList *createGraphAdjacencyList(int vertex){
     if (!graph)
         return NULL;
 
+    graph->directioned = directioned;
     graph->vertex = vertex;
     graph->list = (LinkedList **) malloc(graph->vertex * sizeof(LinkedList *));
     if (!graph->list){
@@ -78,25 +81,59 @@ int getVertexCountGraphAdjacencyList(GraphAdjacencyList *graph){
     return graph->vertex;
 }
 
+int getEdgesCountGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i, c;
+    LinkedList *list;
+    LinkedListNode *listNode;
+
+    if (!graph)
+        return 0;
+
+    for (i = 0, c = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        list = graph->list[i];
+        if (!list)
+            return 0;
+        listNode = getHeadLinkedList(list);
+        while (listNode){
+            listNode = getNextLinkedListNode(listNode);
+            c++;
+        }
+    }
+
+    if (!graph->directioned)
+        c /= 2;
+        
+    return c;
+}
+
 void printGraphAdjacencyList(GraphAdjacencyList *graph){
-    int i;
+    int i, j;
     LinkedList *list;
     LinkedListNode *listNode;
     GraphAdjacencyListNode *graphNode;
+    int *vertex;
 
     if (!graph)
         return;
     
+    vertex = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!vertex)
+        return;
+
+    printf("%d vertices; %d arestas\n", getVertexCountGraphAdjacencyList(graph), getEdgesCountGraphAdjacencyList(graph));
     for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
         printf("%d: ", i + 1);
         list = graph->list[i];
         listNode = getHeadLinkedList(list);
+        j = 0;
         while (listNode){
             graphNode = (GraphAdjacencyListNode *) getDataLinkedListNode(listNode);
             if (graphNode)
-                printf("- Vertex: %d, Weight: %lf ", graphNode->vertex + 1, graphNode->weight);
+                vertex[j++] = graphNode->vertex + 1; 
             listNode = getNextLinkedListNode(listNode);
         }
+        for (; j > 0; j--)
+            printf("%d ", vertex[j - 1]);
         putchar('\n');
     }
 }
@@ -147,6 +184,130 @@ int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB
     }
 
     return true;
+}
+
+double getVertexGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB){
+    LinkedList *list;
+    LinkedListNode *listNode;
+    void *data;
+
+    if (!graph)
+        return (double) __INT_MAX__;
+    if (vertexA < 0)
+        return (double) __INT_MAX__;
+    if (vertexB < 0)
+        return (double) __INT_MAX__;
+    
+    data = NULL;
+    list = graph->list[vertexA];
+    if (!list)
+        return (double) __INT_MAX__;
+    listNode = getHeadLinkedList(list);
+    if (!listNode)
+        return (double) __INT_MAX__;
+    
+    while (listNode){
+        if (compareGraphAdjacencyListNode((void *) &vertexB, getDataLinkedListNode(listNode)) == 0){
+            data = getDataLinkedListNode(listNode);
+            break;
+        }
+
+        listNode = getNextLinkedListNode(listNode);
+    }
+
+    if (!data)
+        return (double) __INT_MAX__;
+    return *((double *) data);
+}
+
+int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *graph, int vertex){
+    int i, j, *neighbourhoods;
+
+    if (!graph)
+        return NULL;
+    if (vertex < 0)
+        return NULL;
+
+    neighbourhoods = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!neighbourhoods)
+        return NULL;
+    
+    for (i = 0, j = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+        if ((double) __INT_MAX__ - getVertexGraphAdjacencyList(graph, vertex, i) > 0.001)
+            neighbourhoods[j++] = i;
+    neighbourhoods[j] = -1;
+    return neighbourhoods;
+}
+
+int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *graph, int root, int value){
+    Queue *queue;
+    int i, *currentNode, *vertexVisited, *distances, *neighbours, *currentNeighbour, distance;
+
+    if (!graph)
+        return 0;
+    if (root < 0 || root > getVertexCountGraphAdjacencyList(graph))
+        return 0;
+    if (value < 0 || value > getVertexCountGraphAdjacencyList(graph))
+        return 0;
+    
+    queue = createQueue();
+    if (!queue)
+        return 0;
+    
+    currentNode = (int *) malloc(sizeof(int));
+    if (!currentNode){
+        destroyQueue(queue);
+        return 0;
+    }
+
+    vertexVisited = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!vertexVisited){
+        free(currentNode);
+        destroyQueue(queue);
+        return 0;
+    }
+
+    distances = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!distances){
+        free(vertexVisited);
+        free(currentNode);
+        destroyQueue(queue);
+        return 0;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        vertexVisited[i] = false;
+        distances[i] = 0;
+    }
+
+    *currentNode = root;
+    pushQueue(queue, (void *) currentNode);
+    vertexVisited[root] = true;
+
+    while (!emptyQueue(queue)){
+        currentNode = (int *) popQueue(queue);
+        neighbours = getNeighbourhoodGraphAdjacencyList(graph, *currentNode);
+        for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+            if (neighbours[i] == -1)
+                break;
+            if (vertexVisited[neighbours[i]])
+                continue;
+            
+            distances[neighbours[i]] = distances[*currentNode] + 1;
+            currentNeighbour = (int *) malloc(sizeof(int));
+            *currentNeighbour = neighbours[i];
+            pushQueue(queue, (void *) currentNeighbour);
+            vertexVisited[neighbours[i]] = true;
+        }
+        free(currentNode);
+    }
+
+    distance = distances[value];
+    destroyQueue(queue);
+    free(neighbours);
+    free(vertexVisited);
+    free(distances);
+    return distance;
 }
 
 #endif

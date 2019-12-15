@@ -141,7 +141,7 @@ int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int root
 
     if (root < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
-    if (value < 0 || root > getVertexCountGraphAdjacencyMatrix(graph))
+    if (value < 0 || value > getVertexCountGraphAdjacencyMatrix(graph))
         return 0;
 
     queue = createQueue();

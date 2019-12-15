@@ -27,6 +27,7 @@ double getVertexGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 int getVertexCountGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 void printGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
+int *getNeighbourhoodGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int);
 int breadthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, int);
 int depthFirstSearchGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 
