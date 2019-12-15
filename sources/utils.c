@@ -191,45 +191,51 @@ GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int direction
 }
 
 GraphAdjacencyList *populateGraphAdjacencyList(char *filename, int directioned){
-    // int i, j, **edges, numlines;
-    // double *weights;
-    // GraphAdjacencyList *graph;
+    int i, j, **edges, numEdges, numLines;
+    double *weights;
+    GraphAdjacencyList *graph;
 
-    // numlines = fileContentLines(filename);
-    // edges = (int **) malloc(numlines * sizeof(int *));
-    // if (!edges)
-    //     return NULL;
-    // weights = (double *) malloc(numlines * sizeof(double));
-    // if (!weights){
-    //     free(edges);
-    //     return NULL;
-    // }
+    numEdges = fileGetEdgesCount(filename);
+    numLines = fileGetLinesCount(filename);
+    edges = (int **) malloc((numLines - 1) * sizeof(int *));
+    if (!edges)
+        return NULL;
+    weights = (double *) malloc((numLines - 1) * sizeof(double));
+    if (!weights){
+        free(edges);
+        return NULL;
+    }
 
-    // if (!readFile(filename, edges, weights)){
-    //     free(weights);
-    //     free(edges);
-    //     return NULL;
-    // }
+    if (!readFile(filename, edges, weights)){
+        free(weights);
+        free(edges);
+        return NULL;
+    }
 
-    // graph = createGraphAdjacencyList(numlines);
-    // if (!graph)
-    //     return NULL;
+    graph = createGraphAdjacencyList(numEdges, directioned);
+    if (!graph){
+        for (j = 0; j < numEdges; j++)
+            free(edges[j]);
+        free(edges);
+        free(weights);
+        return NULL;
+    }
 
-    // for (i = 0; i < numlines; i++){
-    //     if (!insertGraphAdjacencyList(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
-    //         for (j = 0; j < numlines; j++)
-    //             free(edges[i]);
-    //         free(edges);
-    //         free(weights);
-    //         return NULL;
-    //     }
-    //     free(edges[i]);
-    // }
+    for (i = 0; i < (numLines - 1); i++){
+        if (!insertGraphAdjacencyList(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
+            for (j = 0; j < numEdges; j++)
+                free(edges[j]);
+            free(edges);
+            free(weights);
+            return NULL;
+        }
+        free(edges[i]);
+    }
 
-    // free(weights);
-    // free(edges);
+    free(weights);
+    free(edges);
     
-    return NULL;
+    return graph;
 }
 
 #endif

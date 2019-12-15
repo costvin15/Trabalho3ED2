@@ -23,20 +23,30 @@
 #include "../headers/utils.h"
 
 void menu(){
-    // GraphAdjacencyList *graph;
-    GraphAdjacencyMatrix *graph2;
-    int **prim, i;
 
-    // graph = populateGraphAdjacencyList("inputs/test", 0);
-    // printGraphAdjacencyList(graph);
+    GraphAdjacencyList *graph;
+    // GraphAdjacencyMatrix *graph2;
+    // int **prim, i;
+    int bfs;
 
-    graph2 = populateGraphAdjacencyMatrix("inputs/test", 0);
-    printGraphAdjacencyMatrix(graph2);
+    graph = populateGraphAdjacencyList("inputs/test", 0);
+    printGraphAdjacencyList(graph);
+    // int *vizinhos = getNeighbourhoodGraphAdjacencyList(graph, 1);
+    bfs = breadthFirstSearchGraphAdjacencyList(graph, 0, 1);
+    printf("BFS %d\n", bfs);
 
-    prim = primAlgorithmGraphAdjacencyMatrix(graph2);
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
-        printf("%d %d\n", prim[i][0], prim[i][1]);
-    }
+    // for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+    //     printf("%d\n", vizinhos[i]);
+
+    // graph2 = populateGraphAdjacencyMatrix("inputs/test", 0);
+    // printGraphAdjacencyMatrix(graph2);
+    // int *vizinhos = getNeighbourhoodGraphAdjacencyMatrix(graph2, 0);
+    // printf("%p\n", vizinhos);
+
+    // prim = primAlgorithmGraphAdjacencyMatrix(graph2);
+    // for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
+        // printf("%d %d\n", prim[i][0], prim[i][1]);
+    // }
 
     printf("Encerrado.\n");
 
