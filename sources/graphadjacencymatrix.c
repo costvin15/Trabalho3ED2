@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 struct _adjacency_matrix_ {
     int vertices;
@@ -453,10 +454,73 @@ double **floydWarshallGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
 
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
         for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
-            for (k = 0; k < getVertexCountGraphAdjacencyMatrix(graph); j++)
+            for (k = 0; k < getVertexCountGraphAdjacencyMatrix(graph); k++)
                 if (matrix[j][k] - (matrix[j][i] + matrix[i][k]) > 0.001)
                     matrix[j][k] = matrix[j][i] + matrix[i][k];
     return matrix;
+}
+
+double getEccentricityGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertex){
+    int i, maximum;
+    double **floydWarshallMatrix;
+    
+    if (!graph)
+        return -1;
+    if (vertex < 0 || vertex >= getVertexCountGraphAdjacencyMatrix(graph))
+        return -1;
+    
+    floydWarshallMatrix = floydWarshallGraphAdjacencyMatrix(graph);
+    if (!floydWarshallMatrix)
+        return -1;
+    
+    maximum = 0;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        if (fabs(floydWarshallMatrix[vertex][i] - (double) __INT_MAX__) < 0.01)
+            continue;
+        
+        if (floydWarshallMatrix[vertex][i] < 0.01)
+            continue;
+        
+        if (fabs(floydWarshallMatrix[vertex][maximum] - (double) __INT_MAX__) < 0.01)
+            maximum = i;
+        else if (floydWarshallMatrix[vertex][i] - floydWarshallMatrix[vertex][maximum] > 0.01)
+            maximum = i;
+    }
+
+    return floydWarshallMatrix[vertex][maximum];
+}
+
+double getDiameterGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i;
+    double maximum, aux;
+
+    if (!graph)
+        return 0.0;
+
+    maximum = 0.0;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        aux = getEccentricityGraphAdjacencyMatrix(graph, i);
+        if ((double) __INT_MAX__ - aux > 0.001)
+            if (aux > maximum)
+                maximum = aux;
+    }
+    return maximum;
+}
+
+double getRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
+    int i;
+    double minimum, aux;
+
+    if (!graph)
+        return (double) __INT_MAX__;
+
+    minimum = (double) __INT_MAX__;
+    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        aux = getEccentricityGraphAdjacencyMatrix(graph, i);
+        if (aux < minimum)
+            minimum = aux;
+    }
+    return minimum;
 }
 
 #endif
