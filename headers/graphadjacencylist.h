@@ -34,6 +34,7 @@ double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
 int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *, int);
 int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
 int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
+double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *);
 
 #else
 
@@ -51,5 +52,6 @@ extern double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
 extern int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *graph, int vertex);
 extern int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
 extern int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
+extern double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *);
 
 #endif

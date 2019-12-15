@@ -450,4 +450,35 @@ int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *graph){
     return mst;
 }
 
+double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i, j, k;
+    double **matrix;
+
+    if (!graph)
+        return NULL;
+    
+    matrix = (double **) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(double *));
+    if (!matrix)
+        return NULL;
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        matrix[i] = (double *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(double));
+        if (!matrix){
+            for (j = 0; j < i; j++)
+                free(matrix[j]);
+            free(matrix);
+            return NULL;
+        }
+        for (j = 0; j < getVertexCountGraphAdjacencyList(graph); j++)
+            matrix[i][j] = getVertexGraphAdjacencyList(graph, i, j);
+        matrix[i][i] = (double) 0;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+        for (j = 0; j < getVertexCountGraphAdjacencyList(graph); j++)
+            for (k = 0; k < getVertexCountGraphAdjacencyList(graph); k++)
+                if (matrix[j][k] - (matrix[j][i] + matrix[i][k]) > 0.001)
+                    matrix[j][k] = matrix[j][i] + matrix[i][k];
+    return matrix;
+}
+
 #endif
