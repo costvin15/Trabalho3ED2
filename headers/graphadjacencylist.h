@@ -34,7 +34,12 @@ double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
 int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *, int);
 int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
 int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
+int **kruskalAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
 double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *);
+double getEccentricityGraphAdjacencyList(GraphAdjacencyList *, int);
+double getDiameterGraphAdjacencyList(GraphAdjacencyList *);
+double getRadiusGraphAdjacencyList(GraphAdjacencyList *);
+int *getVerticesByRadiusGraphAdjacencyList(GraphAdjacencyList *, int, double);
 
 #else
 
@@ -52,6 +57,11 @@ extern double getVertexGraphAdjacencyList(GraphAdjacencyList *, int, int);
 extern int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *graph, int vertex);
 extern int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *, int, int);
 extern int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
+extern int **kruskalAlgorithmGraphAdjacencyList(GraphAdjacencyList *);
 extern double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *);
+extern double getEccentricityGraphAdjacencyList(GraphAdjacencyList *, int);
+extern double getDiameterGraphAdjacencyList(GraphAdjacencyList *);
+extern double getRadiusGraphAdjacencyList(GraphAdjacencyList *);
+extern int *getVerticesByRadiusGraphAdjacencyList(GraphAdjacencyList *, int, double);
 
 #endif

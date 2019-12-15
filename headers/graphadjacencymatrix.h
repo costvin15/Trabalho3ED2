@@ -37,6 +37,7 @@ double **floydWarshallGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph);
 double getEccentricityGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int);
 double getDiameterGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 double getRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+int *getVerticesByRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, double);
 
 #else
 
@@ -58,5 +59,6 @@ extern double **floydWarshallGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph);
 extern double getEccentricityGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int);
 extern double getDiameterGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
 extern double getRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *);
+extern int *getVerticesByRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *, int, double);
 
 #endif

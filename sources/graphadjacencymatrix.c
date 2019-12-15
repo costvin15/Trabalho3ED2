@@ -374,7 +374,7 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
 }
 
 int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
-    int i, j, *visited;
+    int i, j, c, *visited, **kruskal;
     LinkedList *edgesList;
     LinkedListNode *listNode;
     struct _graph_edge_ {
@@ -386,15 +386,22 @@ int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     if (!graph)
         return NULL;
 
-    edgesList = createLinkedList();
-    if (!edgesList)
+    kruskal = (int **) malloc((getVertexCountGraphAdjacencyMatrix(graph) - 1) * sizeof(int *));
+    if (!kruskal)
         return NULL;
+
+    edgesList = createLinkedList();
+    if (!edgesList){
+        free(kruskal);
+        return NULL;
+    }
 
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
         for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++){ 
             if ((double) __INT_MAX__ - getVertexGraphAdjacencyMatrix(graph, i, j) > 0.001){
                 edge = (struct _graph_edge_ *) malloc(sizeof(struct _graph_edge_));
                 if (!edge){
+                    free(kruskal);
                     destroyLinkedList(edgesList);
                     return NULL;
                 }
@@ -408,6 +415,7 @@ int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
 
     visited = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
     if (!visited){
+        free(kruskal);
         destroyLinkedList(edgesList);
         return NULL;
     }
@@ -415,18 +423,23 @@ int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++)
         visited[i] = false;
     
+    c = 0;
     listNode = getHeadLinkedList(edgesList);
     while (listNode){
         edge = (struct _graph_edge_ *) getDataLinkedListNode(listNode);
-        if (!(visited[edge->parent] && visited[edge->vertex]))
-            printf("%d %d\n", edge->parent + 1, edge->vertex + 1);
+        if (!(visited[edge->parent] && visited[edge->vertex])){
+            kruskal[c] = (int *) malloc(2 * sizeof(int));
+            kruskal[c][0] = edge->parent;
+            kruskal[c][1] = edge->vertex;
+        }
         visited[edge->parent] = true;
         visited[edge->vertex] = true;
 
         listNode = getNextLinkedListNode(listNode);
     }
 
-    return NULL;
+    destroyLinkedList(edgesList);
+    return kruskal;
 }
 
 double **floydWarshallGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
@@ -521,6 +534,31 @@ double getRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
             minimum = aux;
     }
     return minimum;
+}
+
+int *getVerticesByRadiusGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph, int vertex, double radius){
+    int i, j, *vertices;
+    double **floydWarshallMatrix;
+
+    if (!graph)
+        return NULL;
+
+    floydWarshallMatrix = floydWarshallGraphAdjacencyMatrix(graph);
+
+    vertices = (int *) malloc(getVertexCountGraphAdjacencyMatrix(graph) * sizeof(int));
+    if (!vertices){
+        free(floydWarshallMatrix);
+        return NULL;
+    }
+
+    for (i = 0, j = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
+        if (radius - floydWarshallMatrix[vertex][i] > 0.001){
+            vertices[j++] = i;
+        }
+    }
+    vertices[j] = -1;
+
+    return vertices;
 }
 
 #endif
