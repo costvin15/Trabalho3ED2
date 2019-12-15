@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include "../headers/graphadjacencylist.h"
 #include "../headers/linkedlist.h"
 #include "../headers/queue.h"
@@ -450,6 +451,75 @@ int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *graph){
     return mst;
 }
 
+int **kruskalAlgorithmGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i, j, c, *visited, **kruskal;
+    LinkedList *edgesList;
+    LinkedListNode *listNode;
+    struct _graph_edge_ {
+        int parent, vertex;
+        double weight;
+    };
+    struct _graph_edge_ *edge;
+
+    if (!graph)
+        return NULL;
+
+    kruskal = (int **) malloc((getVertexCountGraphAdjacencyList(graph) - 1) * sizeof(int *));
+    if (!kruskal)
+        return NULL;
+
+    edgesList = createLinkedList();
+    if (!edgesList){
+        free(kruskal);
+        return NULL;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        for (j = 0; j < getVertexCountGraphAdjacencyList(graph); j++){ 
+            if ((double) __INT_MAX__ - getVertexGraphAdjacencyList(graph, i, j) > 0.001){
+                edge = (struct _graph_edge_ *) malloc(sizeof(struct _graph_edge_));
+                if (!edge){
+                    free(kruskal);
+                    destroyLinkedList(edgesList);
+                    return NULL;
+                }
+                edge->parent = i;
+                edge->vertex = j;
+                edge->weight = getVertexGraphAdjacencyList(graph, i, j);
+                insertSortedLinkedList(edgesList, (void *) edge, compareVertexListAuxFunction);
+            }
+        }
+    }
+
+    visited = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!visited){
+        free(kruskal);
+        destroyLinkedList(edgesList);
+        return NULL;
+    }
+    
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+        visited[i] = false;
+    
+    c = 0;
+    listNode = getHeadLinkedList(edgesList);
+    while (listNode){
+        edge = (struct _graph_edge_ *) getDataLinkedListNode(listNode);
+        if (!(visited[edge->parent] && visited[edge->vertex])){
+            kruskal[c] = (int *) malloc(2 * sizeof(int));
+            kruskal[c][0] = edge->parent;
+            kruskal[c][1] = edge->vertex;
+        }
+        visited[edge->parent] = true;
+        visited[edge->vertex] = true;
+
+        listNode = getNextLinkedListNode(listNode);
+    }
+
+    destroyLinkedList(edgesList);
+    return kruskal;
+}
+
 double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *graph){
     int i, j, k;
     double **matrix;
@@ -479,6 +549,95 @@ double **floydWarshallGraphAdjacencyList(GraphAdjacencyList *graph){
                 if (matrix[j][k] - (matrix[j][i] + matrix[i][k]) > 0.001)
                     matrix[j][k] = matrix[j][i] + matrix[i][k];
     return matrix;
+}
+
+double getEccentricityGraphAdjacencyList(GraphAdjacencyList *graph, int vertex){
+    int i, maximum;
+    double **floydWarshallMatrix;
+    
+    if (!graph)
+        return -1;
+    if (vertex < 0 || vertex >= getVertexCountGraphAdjacencyList(graph))
+        return -1;
+    
+    floydWarshallMatrix = floydWarshallGraphAdjacencyList(graph);
+    if (!floydWarshallMatrix)
+        return -1;
+    
+    maximum = 0;
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        if (fabs(floydWarshallMatrix[vertex][i] - (double) __INT_MAX__) < 0.01)
+            continue;
+        
+        if (floydWarshallMatrix[vertex][i] < 0.01)
+            continue;
+        
+        if (fabs(floydWarshallMatrix[vertex][maximum] - (double) __INT_MAX__) < 0.01)
+            maximum = i;
+        else if (floydWarshallMatrix[vertex][i] - floydWarshallMatrix[vertex][maximum] > 0.01)
+            maximum = i;
+    }
+
+    return floydWarshallMatrix[vertex][maximum];
+}
+
+double getDiameterGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i;
+    double maximum, aux;
+
+    if (!graph)
+        return 0.0;
+
+    maximum = 0.0;
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        aux = getEccentricityGraphAdjacencyList(graph, i);
+        if ((double) __INT_MAX__ - aux > 0.001)
+            if (aux > maximum)
+                maximum = aux;
+    }
+    return maximum;
+}
+
+double getRadiusGraphAdjacencyList(GraphAdjacencyList *graph){
+    int i;
+    double minimum, aux;
+
+    if (!graph)
+        return (double) __INT_MAX__;
+
+    minimum = (double) __INT_MAX__;
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        aux = getEccentricityGraphAdjacencyList(graph, i);
+        if (aux < minimum)
+            minimum = aux;
+    }
+    return minimum;
+}
+
+
+int *getVerticesByRadiusGraphAdjacencyList(GraphAdjacencyList *graph, int vertex, double radius){
+    int i, j, *vertices;
+    double **floydWarshallMatrix;
+
+    if (!graph)
+        return NULL;
+
+    floydWarshallMatrix = floydWarshallGraphAdjacencyList(graph);
+
+    vertices = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!vertices){
+        free(floydWarshallMatrix);
+        return NULL;
+    }
+
+    for (i = 0, j = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        if (radius - floydWarshallMatrix[vertex][i] > 0.001){
+            vertices[j++] = i;
+        }
+    }
+    vertices[j] = -1;
+
+    return vertices;
 }
 
 #endif

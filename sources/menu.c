@@ -27,6 +27,7 @@ void menu(){
     GraphAdjacencyMatrix *graph2;
     // int **prim, i;
     int i, j;
+    int **kruskal, *radius;
     // int bfs;
 
     // graph = populateGraphAdjacencyList("inputs/test", 0);
@@ -42,12 +43,18 @@ void menu(){
     printGraphAdjacencyMatrix(graph2);
     // int *vizinhos = getNeighbourhoodGraphAdjacencyMatrix(graph2, 0);
     // printf("%p\n", vizinhos);
-    double **floyd = floydWarshallGraphAdjacencyMatrix(graph2);
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
-        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph2); j++)
-            printf("%lf ", floyd[i][j]);
-        printf("\n");
-    }
+    // double **floyd = floydWarshallGraphAdjacencyMatrix(graph2);
+    // for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
+    //     for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph2); j++)
+    //         printf("%lf ", floyd[i][j]);
+    //     printf("\n");
+    // }
+
+    kruskal = kruskalAlgorithmGraphAdjacencyMatrix(graph2);
+    radius = getVerticesByRadiusGraphAdjacencyMatrix(graph2, 0, 20.0);
+
+    for (i = 0; radius[i] != -1; i++)
+        printf("-> %d\n", radius[i]);
 
     printf("Eccentricity: %lf\n", getEccentricityGraphAdjacencyMatrix(graph2, 2));
     printf("Diameter: %lf\n", getDiameterGraphAdjacencyMatrix(graph2));
