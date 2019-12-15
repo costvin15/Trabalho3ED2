@@ -18,68 +18,127 @@
 #define _MENU_C_
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../headers/graphadjacencylist.h"
 #include "../headers/graphadjacencymatrix.h"
 #include "../headers/utils.h"
 
-void menu(){
-    // GraphAdjacencyList *graph;
-    GraphAdjacencyMatrix *graph2;
-    // int **prim, i;
-    int i, j;
-    int **kruskal, *radius;
-    // int bfs;
+void options(int argc, char **argv){
+    int representation;
+    GraphAdjacencyMatrix *graphMatrix;
+    GraphAdjacencyList *graphList;
+    int i, **bfs, *vertex;
 
-    // graph = populateGraphAdjacencyList("inputs/test", 0);
-    // printGraphAdjacencyList(graph);
-    // int *vizinhos = getNeighbourhoodGraphAdjacencyList(graph, 1);
-    // bfs = breadthFirstSearchGraphAdjacencyList(graph, 0, 1);
-    // printf("BFS %d\n", bfs);
+    graphMatrix = NULL;
+    graphList = NULL;
 
-    // for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
-    //     printf("%d\n", vizinhos[i]);
-
-    graph2 = populateGraphAdjacencyMatrix("inputs/test", 1);
-    printGraphAdjacencyMatrix(graph2);
-    // int *vizinhos = getNeighbourhoodGraphAdjacencyMatrix(graph2, 0);
-    // printf("%p\n", vizinhos);
-    // double **floyd = floydWarshallGraphAdjacencyMatrix(graph2);
-    // for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
-    //     for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph2); j++)
-    //         printf("%lf ", floyd[i][j]);
-    //     printf("\n");
-    // }
-
-    kruskal = kruskalAlgorithmGraphAdjacencyMatrix(graph2);
-    radius = getVerticesByRadiusGraphAdjacencyMatrix(graph2, 0, 20.0);
-
-    for (i = 0; radius[i] != -1; i++)
-        printf("-> %d\n", radius[i]);
-
-    printf("Eccentricity: %lf\n", getEccentricityGraphAdjacencyMatrix(graph2, 2));
-    printf("Diameter: %lf\n", getDiameterGraphAdjacencyMatrix(graph2));
-    printf("Radius: %lf\n", getRadiusGraphAdjacencyMatrix(graph2));
-
-    // prim = primAlgorithmGraphAdjacencyList(graph);
-    // for (i = 0; i < getVertexCountGraphAdjacencyList(graph) - 1; i++){
-    //     printf("%d %d\n", prim[i][0], prim[i][1]);
-    // }
-
-    printf("Encerrado.\n");
-
-    /*int i, j;
-    GraphAdjacencyMatrix *graph;
-    graph = populateGraphAdjacencyMatrix("inputs/test", 0);
-    printGraphAdjacencyMatrix(graph);
-
-    for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
-        for (j = 0; j < getVertexCountGraphAdjacencyMatrix(graph); j++)
-            printf("%lf ", getVertexGraphAdjacencyMatrix(graph, i, j));
-        printf("\n");
+    if (strcmp(argv[1], "--representation") == 0){
+        if (strcmp(argv[2], "matrix") == 0){
+            representation = 0;
+            graphMatrix = populateGraphAdjacencyMatrix(argv[3], atoi(argv[4]));
+        } else if (strcmp(argv[2], "list") == 0){
+            representation = 1;
+            graphList = populateGraphAdjacencyList(argv[3], atoi(argv[4]));
+        } else {
+            printf("Unrecognized command: %s\n", argv[2]);
+        }
+    } else 
+        printf("Unrecognized command: %s\n", argv[1]);
+    
+    if (strcmp(argv[5], "--bfs") == 0){
+        if (argc < 8){
+            printf("Usage main [--representation] [matrix || list] [filename] [directioned (0 or 1)] [--bfs] [home vertex] [destiny vertex]\n");
+            return;
+        }
+        
+        if (!representation)
+            printf("%d\n", breadthFirstSearchGraphAdjacencyMatrix(graphMatrix, atoi(argv[6]), atoi(argv[7])));
+        else
+            printf("%d\n", breadthFirstSearchGraphAdjacencyList(graphList, atoi(argv[6]), atoi(argv[7])));
+        return;        
     }
-    int a, b;
-    scanf("%d%d", &a, &b);
-    printf("BFS: %d\n", breadthFirstSearchGraphAdjacencyMatrix(graph, a, b));*/
+
+    if (strcmp(argv[5], "--print") == 0){
+        if (!representation)
+            printGraphAdjacencyMatrix(graphMatrix);
+        else
+            printGraphAdjacencyList(graphList);
+        return;
+    }
+
+    if (strcmp(argv[5], "--eccentricity") == 0){
+        if (argc < 7){
+            printf("Usage main [--representation] [matrix || list] [filename] [directioned (0 or 1)] [--eccentricity] [vertex]\n");
+            return;
+        }
+
+        if (!representation)
+            printf("%lf\n", getEccentricityGraphAdjacencyMatrix(graphMatrix, atoi(argv[6])));
+        else
+            printf("%lf\n", getEccentricityGraphAdjacencyList(graphList, atoi(argv[6])));            
+        return;
+    }
+
+    if (strcmp(argv[5], "--diameter") == 0){
+        if (!representation)
+            printf("%lf\n", getDiameterGraphAdjacencyMatrix(graphMatrix));
+        else
+            printf("%lf\n", getDiameterGraphAdjacencyList(graphList));
+        return;
+    }
+
+    if (strcmp(argv[5], "--radius") == 0){
+        if (!representation)
+            printf("%lf\n", getRadiusGraphAdjacencyMatrix(graphMatrix));
+        else
+            printf("%lf\n", getRadiusGraphAdjacencyList(graphList));
+        return;
+    }
+
+    if (strcmp(argv[5], "--prim") == 0){
+        if (!representation)
+            bfs = primAlgorithmGraphAdjacencyMatrix(graphMatrix);
+        else
+            bfs = primAlgorithmGraphAdjacencyList(graphList);
+        for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graphMatrix) - 1; i++)
+            printf("%d %d\n", bfs[i][0], bfs[i][1]);
+        return;
+    }
+
+    if (strcmp(argv[5], "--kruskal") == 0){
+        if (!representation)
+            bfs = kruskalAlgorithmGraphAdjacencyMatrix(graphMatrix);
+        else
+            bfs = kruskalAlgorithmGraphAdjacencyList(graphList);
+        for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graphMatrix) - 1; i++)
+            if (bfs[i])
+                printf("%d %d\n", bfs[i][0], bfs[i][1]);
+        return;
+    }
+
+    if (strcmp(argv[5], "--vertices_by_radius") == 0){
+        if (argc < 8){
+            printf("Usage main [--representation] [matrix || list] [filename] [directioned (0 or 1)] [--vertices_by_radius] [vertex] [radius]\n");
+            return;
+        }
+
+        if (!representation)
+            vertex = getVerticesByRadiusGraphAdjacencyMatrix(graphMatrix, atoi(argv[6]), atof(argv[7]));
+        else
+            vertex = getVerticesByRadiusGraphAdjacencyList(graphList, atoi(argv[6]), atof(argv[7]));
+        for (i = 0; vertex[i] != -1; i++)
+            printf("%d ", vertex[i]);
+        putchar('\n');
+        return;
+    }
+}
+
+void menu(int argc, char **argv){
+    if (argc < 6)
+        printf("Usage: main [--representation] [matrix || list] [filename] [directioned (0 or 1)]\n[--bfs] [home vertex] [destiny vertex]\n[--print]\n[--eccentricity] [vertex]\n[--diameter]\n[--radius]\n[--prim]\n[--kruskal]\n[--vertices_by_radius] [vertex] [radius]\n");
+    else
+        options(argc, argv);
 }
 
 #endif

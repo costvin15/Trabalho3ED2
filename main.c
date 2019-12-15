@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include "headers/menu.h"
 
-int main(void){
-    menu();
-
+int main(int argc, char **argv){
+    menu(argc, argv);
     return 0;
 }

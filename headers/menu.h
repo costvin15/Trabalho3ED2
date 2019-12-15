@@ -17,10 +17,10 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
-void menu();
+void menu(int argc, char **argv);
 
 #else
 
-extern void menu();
+extern void menu(int argc, char **argv);
 
 #endif
