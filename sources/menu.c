@@ -26,7 +26,7 @@ void menu(){
 
     GraphAdjacencyList *graph;
     // GraphAdjacencyMatrix *graph2;
-    // int **prim, i;
+    int **prim, i;
     int bfs;
 
     graph = populateGraphAdjacencyList("inputs/test", 0);
@@ -43,10 +43,10 @@ void menu(){
     // int *vizinhos = getNeighbourhoodGraphAdjacencyMatrix(graph2, 0);
     // printf("%p\n", vizinhos);
 
-    // prim = primAlgorithmGraphAdjacencyMatrix(graph2);
-    // for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
-        // printf("%d %d\n", prim[i][0], prim[i][1]);
-    // }
+    prim = primAlgorithmGraphAdjacencyList(graph);
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph) - 1; i++){
+        printf("%d %d\n", prim[i][0], prim[i][1]);
+    }
 
     printf("Encerrado.\n");
 
