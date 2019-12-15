@@ -1,5 +1,7 @@
-#graphC
-##Usage
+# graphC
+
+## Usage
+
 ```
 main [--representation] [matrix || list] [filename] [directioned (0 or 1)]
 [--bfs] [home vertex] [destiny vertex]
@@ -11,7 +13,7 @@ main [--representation] [matrix || list] [filename] [directioned (0 or 1)]
 [--vertices_by_radius] [vertex] [radius]
 ```
 
-##How to compile
+## How to compile
 
 ```
 make
