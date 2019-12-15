@@ -23,18 +23,50 @@
 #include <string.h>
 #include <stdbool.h>
 
-int fileContentLines(char *filename){
+int fileGetEdgesCount(char *filename){
     FILE *file;
     int filesize;
+
+    file = fopen(filename, "r");
+    if (!file)
+        return 0;
+    fscanf(file, "%d\n", &filesize);
+
+    return filesize;
+}
+
+int fileGetLinesCount(char *filename){
+    FILE *file;
     char c;
+    int linecount;
+
+    linecount = 1;
+    file = fopen(filename, "r");
+    if (!file)
+        return 0;
+
+    while (!feof(file)){
+        c = fgetc(file);
+        if (c == '\n')
+            linecount++;
+    }
+
+    return linecount;
+}
+
+long fileGetCharCount(char *filename){
+    FILE *file;
+    fpos_t position;
+    long filesize;
 
     file = fopen(filename, "r");
     if (!file)
         return 0;
     
-    for (c = fgetc(file), filesize = 0; c != EOF; c = fgetc(file))
-        if (c == '\n')
-            filesize++;
+    fgetpos(file, &position);
+    if (fseek(file, 0, SEEK_END) || (filesize = ftell(file)) == -1)
+        perror("File lenght unknow");
+    fsetpos(file, &position);
 
     return filesize;
 }
@@ -42,13 +74,14 @@ int fileContentLines(char *filename){
 int readFile(char *filename, int **edges, double *weights){
     FILE *file;
     char *content, *numbers, current, *lines, *linessaveptr;
-    int i, j, filesize, currentPos = 0;
+    int i, j, currentPos = 0;
+    long filesize;
     
     file = fopen(filename, "r");
     if (!file)
         return false;
     
-    filesize = fileContentLines(filename);
+    filesize = fileGetCharCount(filename);
 
     if (filesize < 1)
         return false;
@@ -71,11 +104,13 @@ int readFile(char *filename, int **edges, double *weights){
 
     if (!edges){
         free(content);
+        fclose(file);
         return false;
     }
 
     if (!weights){
         free(content);
+        fclose(file);
         return false;
     }
 
@@ -84,9 +119,8 @@ int readFile(char *filename, int **edges, double *weights){
         j = 0;
         edges[i] = (int *) malloc(2 * sizeof(int));
         if (!edges[i]){
-            for (; j < i; j++)
-                free(edges[i]);
             free(content);
+            fclose(file);
             return false;
         }
 
@@ -94,28 +128,31 @@ int readFile(char *filename, int **edges, double *weights){
         while (numbers){
             if (j != 2)
                 edges[i][j++] = atoi(numbers);
-            else {
+            else
                 weights[i] = atof(numbers);
-            }
             numbers = strtok(NULL, " ");
         }
         lines = __strtok_r(NULL, "\n", &linessaveptr);
         i++;
     }
 
+    free(content);
+    fclose(file);
+
     return true;
 }
 
 GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int directioned){
-    int i, j, **edges, numlines;
+    int i, j, **edges, numEdges, numLines;
     double *weights;
     GraphAdjacencyMatrix *graph;
 
-    numlines = fileContentLines(filename);
-    edges = (int **) malloc(numlines * sizeof(int *));
+    numEdges = fileGetEdgesCount(filename);
+    numLines = fileGetLinesCount(filename);
+    edges = (int **) malloc((numLines - 1) * sizeof(int *));
     if (!edges)
         return NULL;
-    weights = (double *) malloc(numlines * sizeof(double));
+    weights = (double *) malloc((numLines - 1) * sizeof(double));
     if (!weights){
         free(edges);
         return NULL;
@@ -127,14 +164,19 @@ GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int direction
         return NULL;
     }
 
-    graph = createGraphAdjacencyMatrix(numlines);
-    if (!graph)
+    graph = createGraphAdjacencyMatrix(numEdges);
+    if (!graph){
+        for (j = 0; j < numEdges; j++)
+            free(edges[j]);
+        free(edges);
+        free(weights);
         return NULL;
+    }
 
-    for (i = 0; i < numlines; i++){
+    for (i = 0; i < (numLines - 1); i++){
         if(!insertGraphAdjacencyMatrix(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
-            for (j = 0; j < numlines; j++)
-                free(edges[i]);
+            for (j = 0; j < numEdges; j++)
+                free(edges[j]);
             free(edges);
             free(weights);
             return NULL;
@@ -148,47 +190,46 @@ GraphAdjacencyMatrix *populateGraphAdjacencyMatrix(char *filename, int direction
     return graph;
 }
 
-
 GraphAdjacencyList *populateGraphAdjacencyList(char *filename, int directioned){
-    int i, j, **edges, numlines;
-    double *weights;
-    GraphAdjacencyList *graph;
+    // int i, j, **edges, numlines;
+    // double *weights;
+    // GraphAdjacencyList *graph;
 
-    numlines = fileContentLines(filename);
-    edges = (int **) malloc(numlines * sizeof(int *));
-    if (!edges)
-        return NULL;
-    weights = (double *) malloc(numlines * sizeof(double));
-    if (!weights){
-        free(edges);
-        return NULL;
-    }
+    // numlines = fileContentLines(filename);
+    // edges = (int **) malloc(numlines * sizeof(int *));
+    // if (!edges)
+    //     return NULL;
+    // weights = (double *) malloc(numlines * sizeof(double));
+    // if (!weights){
+    //     free(edges);
+    //     return NULL;
+    // }
 
-    if (!readFile(filename, edges, weights)){
-        free(weights);
-        free(edges);
-        return NULL;
-    }
+    // if (!readFile(filename, edges, weights)){
+    //     free(weights);
+    //     free(edges);
+    //     return NULL;
+    // }
 
-    graph = createGraphAdjacencyList(numlines);
-    if (!graph)
-        return NULL;
+    // graph = createGraphAdjacencyList(numlines);
+    // if (!graph)
+    //     return NULL;
 
-    for (i = 0; i < numlines; i++){
-        if (!insertGraphAdjacencyList(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
-            for (j = 0; j < numlines; j++)
-                free(edges[i]);
-            free(edges);
-            free(weights);
-            return NULL;
-        }
-        free(edges[i]);
-    }
+    // for (i = 0; i < numlines; i++){
+    //     if (!insertGraphAdjacencyList(graph, edges[i][0] - 1, edges[i][1] - 1, weights[i], directioned)){
+    //         for (j = 0; j < numlines; j++)
+    //             free(edges[i]);
+    //         free(edges);
+    //         free(weights);
+    //         return NULL;
+    //     }
+    //     free(edges[i]);
+    // }
 
-    free(weights);
-    free(edges);
+    // free(weights);
+    // free(edges);
     
-    return graph;
+    return NULL;
 }
 
 #endif
