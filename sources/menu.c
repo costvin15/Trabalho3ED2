@@ -23,7 +23,7 @@
 #include "../headers/utils.h"
 
 void menu(){
-    GraphAdjacencyList *graph;
+    // GraphAdjacencyList *graph;
     GraphAdjacencyMatrix *graph2;
     int **prim, i;
 
@@ -33,7 +33,6 @@ void menu(){
     graph2 = populateGraphAdjacencyMatrix("inputs/test", 0);
     printGraphAdjacencyMatrix(graph2);
 
-    kruskalAlgorithmGraphAdjacencyMatrix(graph2);
     prim = primAlgorithmGraphAdjacencyMatrix(graph2);
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph2); i++){
         printf("%d %d\n", prim[i][0], prim[i][1]);
