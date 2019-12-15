@@ -302,12 +302,16 @@ int **primAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
     if (!mst){
         destroyLinkedList(edges);
         free(visited);
+        return NULL;
     }
     for (i = 0; i < getVertexCountGraphAdjacencyMatrix(graph); i++){
         mst[i] = (int *) malloc(2 * sizeof(int));
         if (!mst[i]){
             for (j = 0; j < i; j++)
                 free(mst[j]);
+            free(mst);
+            destroyLinkedList(edges);
+            free(visited);
             return NULL;
         }
     }

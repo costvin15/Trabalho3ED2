@@ -310,4 +310,144 @@ int breadthFirstSearchGraphAdjacencyList(GraphAdjacencyList *graph, int root, in
     return distance;
 }
 
+int minimunValuePrimGraphAdjacencyList(double *distances, int *mst, int vertexCount){
+    int i, minimum;
+    if (!distances)
+        return -1;
+    if (!mst)
+        return -1;
+    
+    minimum = 0;
+    for (i = 0; i < vertexCount; i++)
+        if (!mst[i] && distances[minimum] - distances[i] > 0.01)
+            minimum = i;
+    return minimum;
+}
+
+int compareVertexListAuxFunction(void *nodeA, void *nodeB){
+    if (!nodeA)
+        return 0;
+    if (!nodeB)
+        return 0;
+
+    struct vertex {
+        int parent;
+        int vertex;
+        double weight;
+    };
+
+    struct vertex *vertexA, *vertexB;
+    vertexA = (struct vertex *) nodeA;
+    vertexB = (struct vertex *) nodeB;
+
+    if (vertexA->weight == vertexB->weight){
+        if (vertexA->vertex == vertexB->vertex)
+            return 0;
+        else if (vertexA->vertex > vertexB->vertex)
+            return 1;
+        else
+            return -1;
+    }
+    if (vertexA->weight > vertexB->weight)
+        return 1;
+    return -1;
+}
+
+int **primAlgorithmGraphAdjacencyList(GraphAdjacencyList *graph){
+    struct vertex {
+        int parent;
+        int vertex;
+        double weight;
+    };
+
+    int i, j, *visited, **mst, current, *neightbours;
+    LinkedList *edges;
+    struct vertex *currentVertex;
+
+    if (!graph)
+        return NULL;
+    
+    visited = (int *) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int));
+    if (!visited)
+        return NULL;
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+        visited[i] = false;
+    edges = createLinkedList();
+    if (!edges){
+        free(visited);
+        return NULL;
+    }
+
+    mst = (int **) malloc(getVertexCountGraphAdjacencyList(graph) * sizeof(int *));
+    if (!mst){
+        destroyLinkedList(edges);
+        free(visited);
+        return NULL;
+    }
+
+    for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++){
+        mst[i] = (int *) malloc(2 * sizeof(int));
+        if (!mst[i]){
+            for (j = 0; j < i; j++)
+                free(mst[j]);
+            return NULL;
+        }
+    }
+
+    current = 0;
+    currentVertex = (struct vertex *) malloc(sizeof(struct vertex));
+    if (!currentVertex){
+        destroyLinkedList(edges);
+        free(visited);
+        for (i = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+            free(mst[i]);
+        free(mst);
+        return NULL;
+    }
+    currentVertex->parent = 0;
+    currentVertex->vertex = current;
+    currentVertex->weight = 0.0;
+    insertSortedLinkedList(edges, (void *) currentVertex, compareVertexListAuxFunction);
+
+    j = 0;
+    while (getLenghtLinkedList(edges) > 0){
+        currentVertex = removeFront(edges);
+        if (!visited[currentVertex->vertex])
+            if (currentVertex->parent != currentVertex->vertex){
+                mst[j][0] = currentVertex->parent;
+                mst[j++][1] = currentVertex->vertex;
+            }
+        current = currentVertex->vertex;
+
+        if (!visited[current]){
+            visited[current] = true;
+            neightbours = getNeighbourhoodGraphAdjacencyList(graph, current);
+            for (i = 0; neightbours[i] != -1; i++){
+                if (visited[neightbours[i]])
+                    continue;
+                currentVertex = (struct vertex *) malloc(sizeof(struct vertex));
+                if (!currentVertex){
+                    free(neightbours);
+                    destroyLinkedList(edges);
+                    free(visited);
+                    for (j = 0; i < getVertexCountGraphAdjacencyList(graph); i++)
+                        free(mst[i]);
+                    free(mst);
+                    return NULL;
+                }
+                currentVertex->parent = current;
+                currentVertex->vertex = neightbours[i];
+                currentVertex->weight = getVertexGraphAdjacencyList(graph, current, neightbours[i]);
+                insertSortedLinkedList(edges, (void *) currentVertex, compareVertexListAuxFunction);
+            }
+        }
+    }
+
+    free(neightbours);
+    destroyLinkedList(edges);
+    free(visited);
+
+    return mst;
+}
+
 #endif
