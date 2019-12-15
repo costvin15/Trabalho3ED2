@@ -431,6 +431,7 @@ int **kruskalAlgorithmGraphAdjacencyMatrix(GraphAdjacencyMatrix *graph){
             kruskal[c] = (int *) malloc(2 * sizeof(int));
             kruskal[c][0] = edge->parent;
             kruskal[c][1] = edge->vertex;
+            c++;
         }
         visited[edge->parent] = true;
         visited[edge->vertex] = true;
