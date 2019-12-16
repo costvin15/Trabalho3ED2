@@ -190,6 +190,7 @@ int insertGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB
 double getVertexGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int vertexB){
     LinkedList *list;
     LinkedListNode *listNode;
+    GraphAdjacencyListNode *graphNode;
     void *data;
 
     if (!graph)
@@ -218,7 +219,8 @@ double getVertexGraphAdjacencyList(GraphAdjacencyList *graph, int vertexA, int v
 
     if (!data)
         return (double) __INT_MAX__;
-    return *((double *) data);
+    graphNode = (GraphAdjacencyListNode *) data;
+    return graphNode->weight;
 }
 
 int *getNeighbourhoodGraphAdjacencyList(GraphAdjacencyList *graph, int vertex){
